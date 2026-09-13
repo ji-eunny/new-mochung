@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 재훈 · 지은 모바일 청첩장
 
-## Getting Started
+첨부 시안 7페이지의 사진 배치, 여백, 손글씨와 명조체를 반영한 React 19 / Next.js 16 정적 웹사이트입니다. 휴대폰에서는 화면 너비에 맞춰, 데스크톱에서는 최대 480px로 표시됩니다.
 
-First, run the development server:
+## 실행
 
-```bash
+```sh
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[로컬 미리보기](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```sh
+npm run lint
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+빌드 결과는 `out/`에 생성됩니다. 정적 호스팅에 업로드할 수 있습니다. 기존 커스텀 도메인 설정을 유지하며, 이 작업에서는 배포하지 않았습니다.
 
-## Learn More
+## 구성과 수정
 
-To learn more about Next.js, take a look at the following resources:
+- `src/app/page.tsx`: 7페이지 구성 순서
+- `src/components/invitation/`: Cover, Greeting, Ceremony, Gallery, Accounts, Closing 및 재사용 가능한 Photo / GalleryLightbox
+- `src/lib/invitation.ts`: 예식 일시, 장소, 사진 목록, 양가 계좌정보
+- `src/lib/site.ts`: 제목, 도메인, 소셜 공유 미리보기
+- `src/app/globals.css`: PDF 비율(289.5 × 430.5), 사진 크롭, 반응형 타이포그래피
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**계좌번호는 시안의 예시 `1234-1234-1234`입니다.** 실제 정보로 교체하려면 `ACCOUNTS`의 은행·예금주·번호를 수정하세요. 이전 코드의 임시 번호는 사용하지 않습니다.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 동작
 
-## Deploy on Vercel
+- 네이버지도 / 카카오맵에서 예식장 검색
+- 사진을 누르면 확대, 좌우 스와이프·화살표·방향키로 이동, Escape로 닫기
+- 사진 더보기 / 접기
+- 신랑측 / 신부측 계좌 탭, 방향키 접근 및 계좌번호 복사
+- 클립보드 API를 지원하지 않는 인앱 브라우저의 복사 대체 처리와 결과 안내
+- 기본 스크롤, 화면 확대, 키보드 포커스와 모달 포커스 복원 지원
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 시안 자산
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+기존 `public/images` 사진을 우선 사용했습니다. 기존 폴더에 없는 셀카·브이 포즈·잠옷·입맞춤 사진, 시안의 크롭을 유지한 드레스·거울 사진, 장식이 포함된 작은 사진, 손글씨 인사말과 마지막 인사 사진은 사용자가 제공한 PDF에서 추출해 `public/images/reference/`에 보관했습니다. PDF 자체를 화면 배경으로 표시하지 않으며, 모든 정보와 버튼은 React 요소입니다. 손글씨는 시안 원본 이미지와 대체 텍스트를 함께 제공합니다.
+
+한글은 자체 호스팅하는 나눔명조를 사용합니다. 라이선스는 `public/fonts/NanumMyeongjo-OFL.txt`에 있습니다. PDF와 폰트 원본이 달라 글자 형태에 소폭 차이가 있을 수 있습니다.

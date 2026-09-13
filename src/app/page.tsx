@@ -1,24 +1,10 @@
-import MobileFrame from "@/components/layout/MobileFrame";
-import Section01Cover from "@/components/sections/Section01Cover";
-import Section02Greeting from "@/components/sections/Section02Greeting";
-import Section03Gallery from "@/components/sections/Section03Gallery";
-import Section04Timeline from "@/components/sections/Section04Timeline";
-import Section05Calendar from "@/components/sections/Section05Calendar";
-import Section06Map from "@/components/sections/Section06Map";
-import Section07Heart from "@/components/sections/Section07Heart";
-import Section08Closing from "@/components/sections/Section08Closing";
+import Cover from '@/components/invitation/Cover';
+import Greeting from '@/components/invitation/Greeting';
+import Ceremony from '@/components/invitation/Ceremony';
+import Gallery from '@/components/invitation/Gallery';
+import Accounts from '@/components/invitation/Accounts';
+import Closing from '@/components/invitation/Closing';
 
 export default function Home() {
-  return (
-    <MobileFrame>
-      <Section01Cover />
-      <Section02Greeting />
-      <Section05Calendar />
-      <Section06Map />
-      <Section03Gallery />
-      <Section04Timeline />
-      <Section07Heart />
-      <Section08Closing />
-    </MobileFrame>
-  );
+  return <main className="invitation"><Cover /><Greeting /><Ceremony /><Gallery /><Accounts /><Closing /></main>;
 }
