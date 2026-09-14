@@ -3,8 +3,12 @@ export const WEDDING = {
   date: '2027-02-13T10:50:00+09:00',
   dateLabel: '2027년 2월 13일 토요일 오전 10시 50분',
   venue: '까사그랑데 센트로',
-  address: '서울 광진구 능동로 87 건대입구역자이엘라 6층',
+  address: '서울 광진구 능동로 87 건대입구역 자이엘라 6층',
   mapQuery: '까사그랑데 센트로 서울 광진구 능동로 87',
+  /** LOCATION 섹션 지도·오시는 길 */
+  coordinates: { lat: 37.5414, lng: 127.0699 },
+  directions: '2호선 · 7호선 건대입구역 5번 출구 도보 1분',
+  parking: '건물 내 B2~B5 / 외부 주차장',
 };
 
 export type Account = { role: string; name: string; bank: string; number: string };
@@ -42,7 +46,7 @@ export const PHOTOS = {
     { src: '/images/img8.jpg', alt: '잔디밭에 앉아 손을 든 두 사람' },
     { src: '/images/img3.jpg', alt: '노을 아래 손을 맞잡은 두 사람' },
   ],
-  accounts: { src: '/images/img2.jpg', alt: '반지를 보여주며 활짝 웃는 재훈과 지은' },
+  accounts: { src: '/images/DSC00451.JPG', alt: '반지를 보여주며 활짝 웃는 재훈과 지은' },
   closing: { src: '/images/reference/closing.webp', alt: '손을 잡고 감사 인사를 하는 두 사람' },
 } satisfies Record<string, Photo | Photo[]>;
 

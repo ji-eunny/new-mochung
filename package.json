@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:https": "next dev --experimental-https -H 0.0.0.0",
     "build": "next build",
     "build:gh": "next build && touch out/.nojekyll",
     "deploy": "npm run build:gh && npx --yes gh-pages@6 -d out -b gh-pages -t -m \"deploy: GitHub Pages\"",

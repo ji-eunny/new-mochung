@@ -11,5 +11,15 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title: SITE.title, description: SITE.description, images: [SITE.ogImage] },
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="ko" className={myeongjo.variable}><body>{children}</body></html>;
+  return (
+    <html lang="ko" className={myeongjo.variable}>
+      <head>
+        {/* JS 미실행 시 등장 애니메이션 초기 상태(숨김)에서 콘텐츠가 그대로 보이도록 */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1 !important;transform:none !important}`}</style>
+        </noscript>
+      </head>
+      <body>{children}</body>
+    </html>
+  );
 }

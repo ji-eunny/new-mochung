@@ -1,31 +1,54 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { MORE_PHOTOS, PHOTOS, type Photo as PhotoData } from '@/lib/invitation';
 import Photo from './Photo';
-import GalleryLightbox from './GalleryLightbox';
+import Section from './Section';
+import Reveal from './Reveal';
+import Lightbox from './Lightbox';
 
 const album = [...PHOTOS.triptych, PHOTOS.pajamas, PHOTOS.veil, ...PHOTOS.grid, ...MORE_PHOTOS];
 
+/** 5p. 대표 사진 + 3×2 그리드(마지막 칸은 "더보기" → 슬라이드 팝업). */
 export default function Gallery() {
-  const [expanded, setExpanded] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
-  const moreButton = useRef<HTMLButtonElement>(null);
   const open = (photo: PhotoData) => setSelected(album.findIndex(item => item.src === photo.src));
-  const photoButton = (photo: PhotoData, className = '') => <button key={photo.src} className={`photo-button ${className}`} onClick={() => open(photo)} aria-label={`${photo.alt} 크게 보기`}><Photo photo={photo} /></button>;
 
-  return <>
-    <section className="invitation-page portraits" aria-label="우리의 웨딩 사진">
-      <div className="portrait-triptych">{PHOTOS.triptych.map(photo => photoButton(photo))}</div>
-      {photoButton(PHOTOS.pajamas, 'pajamas-photo')}
-    </section>
-    <section className="invitation-page gallery" aria-label="사진첩">
-      {photoButton(PHOTOS.veil, 'veil-photo')}
-      <div className="gallery-grid">{PHOTOS.grid.map((photo, index) => index === 5 && !expanded
-        ? <button key={photo.src} ref={moreButton} className="photo-button more-photos" onClick={() => setExpanded(true)} aria-expanded={expanded} aria-controls="extended-gallery"><Photo photo={photo} /><span>더보기</span></button>
-        : photoButton(photo))}</div>
-    </section>
-    {expanded && <div id="extended-gallery" className="extended-gallery"><div className="expanded-grid">{MORE_PHOTOS.map(photo => photoButton(photo))}</div><button className="collapse-gallery" onClick={() => { setExpanded(false); requestAnimationFrame(() => moreButton.current?.focus()); }}>사진 접기</button></div>}
-    {selected !== null && <GalleryLightbox photos={album} initialIndex={selected} onClose={() => setSelected(null)} />}
-  </>;
+  return (
+    <Section aria-label="사진첩" className="min-h-0 justify-start gap-0 px-5 py-14">
+      {/* 고정 px 간격(gap-6)으로 PC·모바일 동일하게 */}
+      <div className="flex w-full flex-col items-center gap-10">
+        <Reveal className="w-full max-w-[320px]">
+          <Photo photo={PHOTOS.veil} sizes="320px" className="w-full aspect-[6/4] mt-12" />
+        </Reveal>
+
+        <div className="grid w-full grid-cols-3 gap-0">
+          {PHOTOS.grid.map((photo, index) => {
+            const isMore = index === PHOTOS.grid.length - 1;
+            return (
+              <Reveal key={photo.src} delay={index * 90} className="aspect-[4/6] w-full">
+                <button
+                  className="relative block h-full w-full"
+                  onClick={() => open(photo)}
+                  aria-haspopup={isMore ? 'dialog' : undefined}
+                  aria-label={isMore ? '사진 더보기, 슬라이드로 크게 보기' : `${photo.alt} 크게 보기`}
+                >
+                  <Photo photo={photo} sizes="30vw" className="h-full w-full" />
+                  {isMore && (
+                    <span className="absolute inset-0 grid place-items-center bg-black/35 text-[17px] text-white">
+                      더보기
+                    </span>
+                  )}
+                </button>
+              </Reveal>
+            );
+          })}
+        </div>
+      </div>
+
+      {selected !== null && (
+        <Lightbox photos={album} initialIndex={selected} onClose={() => setSelected(null)} />
+      )}
+    </Section>
+  );
 }
