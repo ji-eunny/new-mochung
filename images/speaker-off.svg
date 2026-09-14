@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  width="256" height="256" viewBox="0 0 256 256" fill="none">
+  <g stroke="#111111"
+     stroke-width="7"
+     stroke-linecap="round"
+     stroke-linejoin="round">
+
+    <!-- speaker body -->
+    <path d="
+      M55 111
+      L81 111
+      L111 83
+      C116 78 123 82 123 89
+      L123 167
+      C123 174 116 178 111 173
+      L81 145
+      L55 145
+      C49 145 45 141 45 135
+      L45 121
+      C45 115 49 111 55 111
+      Z" />
+
+    <!-- sound waves -->
+    <path d="M139 105 C149 116 149 140 139 151" />
+    <path d="M154 92 C174 111 174 145 154 164" />
+
+    <!-- mute slash -->
+    <path d="M91 183 L163 72" />
+  </g>
+</svg>

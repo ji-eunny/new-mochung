@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="512" height="512" viewBox="0 0 512 512"
+     fill="none">
+  <defs>
+    <!-- 아주 미세한 손그림 질감 -->
+    <filter id="rough" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2"
+                         xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+
+  <g stroke="#F7C948"
+     stroke-width="24"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     filter="url(#rough)">
+    <!-- 왼쪽 위 -->
+    <path d="M168 96 C164 115 158 134 152 154" />
+    <!-- 가운데 대각선 -->
+    <path d="M224 151 C246 138 266 124 286 109" />
+    <!-- 오른쪽 아래 -->
+    <path d="M263 206 C283 202 302 198 320 196" />
+  </g>
+</svg>

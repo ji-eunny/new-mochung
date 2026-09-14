@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  width="512" height="320" viewBox="0 0 512 320" fill="none">
+  <defs>
+    <filter id="rough" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise"
+        baseFrequency="0.018"
+        numOctaves="2"
+        seed="19"
+        result="noise"/>
+      <feDisplacementMap in="SourceGraphic"
+        in2="noise"
+        scale="2.1"
+        xChannelSelector="R"
+        yChannelSelector="G"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#rough)"
+     stroke="#2F2A27"
+     stroke-width="7"
+     stroke-linecap="round"
+     stroke-linejoin="round">
+
+    <!-- 손그림 곡선 -->
+    <path d="M72 78
+             C98 120, 138 150, 182 158
+             C222 166, 260 156, 286 137" />
+
+    <!-- 하트 모양 루프 -->
+    <path d="M286 137
+             C306 118, 320 96, 312 76
+             C304 57, 281 54, 267 70
+             C253 54, 230 57, 222 76
+             C213 98, 230 120, 267 147
+             C274 142, 280 139, 286 137" />
+
+    <!-- 하트에서 이어지는 꼬리 -->
+    <path d="M267 147
+             C294 164, 329 174, 369 173
+             C394 172, 416 166, 438 156" />
+
+    <!-- 화살표 -->
+    <path d="M420 147 L440 156 L426 175" />
+  </g>
+</svg>
