@@ -20,7 +20,7 @@ export default function Closing() {
       </Reveal>
       <Reveal delay={120} className="text-left text-[16px] leading-[2] mt-24 w-full pl-6">
         <p>소중한 날 함께해 주셔서 감사합니다.</p>
-        <p className="mt-4">지은, 재훈 드림</p>
+        <p className="mt-4">재훈, 지은 드림</p>
       </Reveal>
 
       <Reveal delay={200} className="mt-60">

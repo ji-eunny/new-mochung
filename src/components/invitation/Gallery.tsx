@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { MORE_PHOTOS, PHOTOS, type Photo as PhotoData } from '@/lib/invitation';
+import { ALBUM_PHOTOS, PHOTOS, type Photo as PhotoData } from '@/lib/invitation';
 import Photo from './Photo';
 import Section from './Section';
 import Reveal from './Reveal';
 import Lightbox from './Lightbox';
 
-const album = [...PHOTOS.triptych, PHOTOS.pajamas, PHOTOS.veil, ...PHOTOS.grid, ...MORE_PHOTOS];
+const album = ALBUM_PHOTOS;
 
 /** 5p. 대표 사진 + 3×2 그리드(마지막 칸은 "더보기" → 슬라이드 팝업). */
 export default function Gallery() {

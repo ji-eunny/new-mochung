@@ -10,12 +10,29 @@
 
 @layer base {
   :root { color-scheme: light; }
-  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    touch-action: manipulation;
+  }
   body {
     margin: 0;
     background: #ffffff;
     color: #111111;
     font-family: var(--font-myeongjo), 'AppleMyungjo', 'Batang', serif;
+    touch-action: manipulation;
+    overscroll-behavior: none;
+  }
+  /* 자동 줄바꿈 금지. 의도된 <br>만 개행. (350px 이하에서만 줄바꿈 허용) */
+  p, span, time, a, button, li, label, h1, h2, h3, h4, h5, h6, footer, strong, em {
+    white-space: nowrap;
+  }
+  @media (max-width: 350px) {
+    p, span, time, a, button, li, label, h1, h2, h3, h4, h5, h6, footer, strong, em {
+      white-space: normal;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
   }
   button, a { -webkit-tap-highlight-color: transparent; }
   button { cursor: pointer; }
@@ -61,7 +78,8 @@
 .celebrate-burst-left,
 .celebrate-burst-right {
   position: absolute;
-  bottom: 0;
+  /* 화면 맨 아래보다 더 아래에서 시작해 올라오며 보이게 */
+  bottom: -72px;
   animation: celebrate-burst-up cubic-bezier(0.08, 0.92, 0.1, 1) forwards;
   will-change: transform, opacity;
   line-height: 1;

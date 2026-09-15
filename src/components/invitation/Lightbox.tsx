@@ -52,7 +52,7 @@ export default function Lightbox({ photos, initialIndex, onClose }: LightboxProp
       </button>
 
       <div
-        className="absolute inset-x-0 top-[max(56px,env(safe-area-inset-top))] bottom-[max(84px,env(safe-area-inset-bottom))] overflow-hidden [touch-action:pan-y_pinch-zoom]"
+        className="absolute inset-x-0 top-[max(56px,env(safe-area-inset-top))] bottom-[max(84px,env(safe-area-inset-bottom))] overflow-hidden [touch-action:pan-y]"
         onTouchStart={event => { touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }; }}
         onTouchEnd={event => {
           if (!touchStart.current || event.changedTouches.length === 0) return;

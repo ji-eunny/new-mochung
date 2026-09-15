@@ -26,10 +26,10 @@ function spawnSide(side: Side, nextId: { current: number }) {
   const count = 14 + Math.floor(Math.random() * 6);
 
   return Array.from({ length: count }, (): Particle => {
-    // 위로 높이 튀어오르되, 가운데로 살짝 모이고 양옆으로도 약간 퍼지게(균형).
+    // 위로 높이 튀어오르되, 반대편(가운데→바깥)으로 더 넓게 퍼지게.
     const dy = -(380 + Math.random() * 520);
-    const towardCenter = (side === 'left' ? 1 : -1) * (55 + Math.random() * 75);
-    const spread = (Math.random() - 0.5) * 90;
+    const towardCenter = (side === 'left' ? 1 : -1) * (110 + Math.random() * 140);
+    const spread = (Math.random() - 0.5) * 160;
     const dx = towardCenter + spread;
     return {
       id: nextId.current++,
@@ -73,7 +73,7 @@ export default function CelebrateButton() {
         </svg>
       </button>
 
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 overflow-hidden [clip-path:inset(0_0_36px_0)]">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 overflow-hidden [clip-path:inset(0_0_8px_0)]">
         {particles.map(p => (
           <span
             key={p.id}

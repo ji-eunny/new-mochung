@@ -53,7 +53,7 @@ export default function ShareButton() {
       </button>
       <p role="status" aria-live="polite" className="min-h-[1.5em] text-[13px] text-neutral-500">{message}</p>
       {showLink && (
-        <a href={SITE.url} className="max-w-[80vw] select-all break-all text-center text-[13px] text-neutral-700 underline">
+        <a href={SITE.url} className="max-w-[80vw] select-all text-center text-[13px] text-neutral-700 underline">
           {SITE.url}
         </a>
       )}

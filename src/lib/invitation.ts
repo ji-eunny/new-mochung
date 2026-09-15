@@ -37,20 +37,40 @@ export const PHOTOS = {
     { src: '/images/02.jpg', alt: '다정하게 나란히 선 두 사람' },
   ],
   pajamas: { src: '/images/reference/pajamas.webp', alt: '잠옷을 입고 도넛을 즐기는 두 사람' },
-  veil: { src: '/images/09.jpg', alt: '푸른 하늘 아래 베일 속에서 마주한 두 사람', position: '50% 65%' },
+  /** 앨범(Gallery) 대표·그리드 — complete 폴더 */
+  veil: { src: '/images/complete/IMG_3744.JPG', alt: '재훈과 지은의 웨딩 사진', position: '50% 50%' },
   grid: [
-    { src: '/images/reference/blue-dress.webp', alt: '푸른 드레스를 입은 지은' },
-    { src: '/images/reference/mirror-heart.webp', alt: '거울 앞에 하트를 그리는 재훈과 지은' },
-    { src: '/images/reference/garden-kiss.webp', alt: '초록 담장 아래 다정한 입맞춤' },
-    { src: '/images/img5.jpg', alt: '비눗방울 속에서 웃는 두 사람' },
-    { src: '/images/img8.jpg', alt: '잔디밭에 앉아 손을 든 두 사람' },
-    { src: '/images/img3.jpg', alt: '노을 아래 손을 맞잡은 두 사람' },
+    { src: '/images/complete/IMG_3745.JPG', alt: '재훈과 지은의 웨딩 사진 1' },
+    { src: '/images/complete/IMG_3746.JPG', alt: '재훈과 지은의 웨딩 사진 2' },
+    { src: '/images/complete/IMG_3748-2.JPG', alt: '재훈과 지은의 웨딩 사진 3' },
+    { src: '/images/complete/IMG_3751.JPG', alt: '재훈과 지은의 웨딩 사진 4' },
+    { src: '/images/complete/IMG_3752.JPG', alt: '재훈과 지은의 웨딩 사진 5' },
+    { src: '/images/complete/IMG_3753.JPG', alt: '재훈과 지은의 웨딩 사진 6' },
   ],
   accounts: { src: '/images/DSC00451.JPG', alt: '반지를 보여주며 활짝 웃는 재훈과 지은' },
   closing: { src: '/images/reference/closing.webp', alt: '손을 잡고 감사 인사를 하는 두 사람' },
 } satisfies Record<string, Photo | Photo[]>;
 
-export const MORE_PHOTOS: Photo[] = [
-  ...Array.from({ length: 25 }, (_, i) => ({ src: `/images/${String(i + 1).padStart(2, '0')}.jpg`, alt: `재훈과 지은의 웨딩 사진 ${i + 1}` })),
-  ...Array.from({ length: 14 }, (_, i) => ({ src: `/images/img${i + 1}.jpg`, alt: `재훈과 지은의 야외 사진 ${i + 1}` })),
-].filter(photo => ![...PHOTOS.triptych, ...PHOTOS.grid, PHOTOS.veil].some(shown => shown.src === photo.src));
+/** 앨범 라이트박스 — complete 폴더 전체 */
+export const ALBUM_PHOTOS: Photo[] = [
+  { src: '/images/complete/IMG_3744.JPG', alt: '재훈과 지은의 웨딩 사진 1' },
+  { src: '/images/complete/IMG_3745.JPG', alt: '재훈과 지은의 웨딩 사진 2' },
+  { src: '/images/complete/IMG_3746.JPG', alt: '재훈과 지은의 웨딩 사진 3' },
+  { src: '/images/complete/IMG_3748-2.JPG', alt: '재훈과 지은의 웨딩 사진 4' },
+  { src: '/images/complete/IMG_3751.JPG', alt: '재훈과 지은의 웨딩 사진 5' },
+  { src: '/images/complete/IMG_3752.JPG', alt: '재훈과 지은의 웨딩 사진 6' },
+  { src: '/images/complete/IMG_3753.JPG', alt: '재훈과 지은의 웨딩 사진 7' },
+  { src: '/images/complete/IMG_3758.JPG', alt: '재훈과 지은의 웨딩 사진 8' },
+  { src: '/images/complete/IMG_3759.JPG', alt: '재훈과 지은의 웨딩 사진 9' },
+  { src: '/images/complete/IMG_3767.JPG', alt: '재훈과 지은의 웨딩 사진 10' },
+  { src: '/images/complete/IMG_3768.JPG', alt: '재훈과 지은의 웨딩 사진 11' },
+  { src: '/images/complete/IMG_3773.JPG', alt: '재훈과 지은의 웨딩 사진 12' },
+  { src: '/images/complete/IMG_3777.JPG', alt: '재훈과 지은의 웨딩 사진 13' },
+  { src: '/images/complete/IMG_5085-2.JPG', alt: '재훈과 지은의 웨딩 사진 14' },
+  { src: '/images/complete/IMG_5259-2.JPG', alt: '재훈과 지은의 웨딩 사진 15' },
+  { src: '/images/complete/IMG_5260-2.JPG', alt: '재훈과 지은의 웨딩 사진 16' },
+  { src: '/images/complete/IMG_5262-2.JPG', alt: '재훈과 지은의 웨딩 사진 17' },
+  { src: '/images/complete/IMG_5263-2.JPG', alt: '재훈과 지은의 웨딩 사진 18' },
+  { src: '/images/complete/IMG_5264-2.JPG', alt: '재훈과 지은의 웨딩 사진 19' },
+  { src: '/images/complete/IMG_5322-2.JPG', alt: '재훈과 지은의 웨딩 사진 20' },
+];
