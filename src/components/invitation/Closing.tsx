@@ -18,7 +18,7 @@ export default function Closing() {
           alt={PHOTOS.closing.alt}
         />
       </Reveal>
-      <Reveal delay={120} className="text-left text-[16px] leading-[2] mt-24 w-full pl-6">
+      <Reveal delay={120} className="text-left text-[14px] leading-[2] mt-24 w-full pl-6">
         <p>소중한 날 함께해 주셔서 감사합니다.</p>
         <p className="mt-4">재훈, 지은 드림</p>
       </Reveal>
@@ -30,7 +30,7 @@ export default function Closing() {
       </Reveal>
 
       <Reveal delay={120}>
-        <footer className="text-center text-[12px] tracking-wide text-neutral-400">
+        <footer className="text-center text-[10px] tracking-wide text-neutral-400 mt-4">
           © 2027 Jieun &amp; Jaehoon. All rights reserved.
         </footer>
       </Reveal>

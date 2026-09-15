@@ -2,7 +2,7 @@ import { WEDDING } from '@/lib/invitation';
 import Section from './Section';
 import Reveal from './Reveal';
 
-const mapLink = 'inline-flex min-h-11 items-center rounded-full border border-neutral-300 px-6 py-2 text-[16px]';
+const mapLink = 'inline-flex min-h-11 items-center rounded-full border border-neutral-300 px-6 py-2 text-[14px]';
 
 /** ACCOUNTS 위. 예식장 위치·지도·오시는 길. */
 export default function Location() {
@@ -19,10 +19,10 @@ export default function Location() {
       </Reveal>
 
       <Reveal delay={120} className="w-full max-w-[320px] py-8">
-        <p className="font-['Times_New_Roman',Times,serif] text-[22px] tracking-wide text-neutral-800">{WEDDING.venue}</p>
-        <p className="mt-4 text-[15px] leading-[1.9] text-neutral-600">{WEDDING.address}</p>
-        <p className="mt-5 text-[14px] tracking-wide text-neutral-500">{WEDDING.directions}</p>
-        <p className="mt-5 text-[14px] tracking-wide text-neutral-500">주차 : {WEDDING.parking}</p>
+        <p className=" text-[20px] tracking-wide text-neutral-800">{WEDDING.venue}</p>
+        <p className="mt-4 text-[13px] leading-[1.9] text-neutral-600">{WEDDING.address}</p>
+        <p className="mt-5 text-[12px] tracking-wide text-neutral-500">{WEDDING.directions}</p>
+        <p className="mt-5 text-[12px] tracking-wide text-neutral-500">주차 : {WEDDING.parking}</p>
       </Reveal>
 
 

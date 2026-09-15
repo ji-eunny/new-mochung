@@ -27,9 +27,9 @@ export default function WeddingDay() {
       </Reveal>
 
       <Reveal delay={120} className="text-center">
-        <p className="font-['Times_New_Roman',Times,serif] text-[46px] leading-none tracking-tight text-neutral-800">
+        <p className="font-['Times_New_Roman',Times,serif] text-[40px] leading-none tracking-tight text-neutral-800">
           {String(month).padStart(2, '0')}
-          <span className="mx-1 align-middle text-[26px] text-neutral-400">.</span>
+          <span className="mx-1 align-middle text-[24px] text-neutral-400">.</span>
           {String(day).padStart(2, '0')}
         </p>
         <p className="mt-4 text-[14px] tracking-wide text-neutral-500">{WEDDING.dateLabel}</p>

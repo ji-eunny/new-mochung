@@ -56,7 +56,7 @@ export default function Accounts() {
               onClick={() => { setSide(value); setMessage(''); }}
               onKeyDown={event => onKeyNav(event, index)}
               className={cn(
-                'min-h-11 border-b-2 pb-2 text-[18px] transition-colors',
+                'min-h-11 border-b-2 pb-2 text-[16px] transition-colors',
                 side === value ? 'border-[#6c5c60] text-neutral-900' : 'border-neutral-200 text-neutral-400',
               )}
             >
@@ -69,12 +69,12 @@ export default function Accounts() {
           {ACCOUNTS[side].map(account => (
             <div key={account.name} className="grid grid-cols-[1fr_auto] items-center gap-3 py-6">
               <div className="min-w-0">
-                <p className="text-[17px]">{account.role} | {account.name}</p>
+                <p className="text-[15px]">{account.role} | {account.name}</p>
                 <p className="mt-1 text-[14px] text-neutral-500">{account.bank}</p>
-                <p className="select-text text-[17px] tracking-tight">{account.number}</p>
+                <p className="select-text text-[15px] tracking-tight">{account.number}</p>
               </div>
               <button
-                className="min-h-11 shrink-0 rounded-full border border-neutral-300 px-4 text-[15px]"
+                className="min-h-11 shrink-0 rounded-full border border-neutral-300 px-4 text-[13px]"
                 aria-label={`${account.name} 계좌번호 복사`}
                 onClick={() => copy(account.name, account.number)}
               >
@@ -84,7 +84,7 @@ export default function Accounts() {
           ))}
         </Reveal>
 
-        <p role="status" className="mt-3 min-h-[2em] text-center text-[14px] leading-[1.7] text-neutral-500">{message}</p>
+        <p role="status" className="mt-3 min-h-[2em] text-center text-[12px] leading-[1.7] text-neutral-500">{message}</p>
       </div>
     </Section>
   );

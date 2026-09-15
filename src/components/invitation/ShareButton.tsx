@@ -47,11 +47,11 @@ export default function ShareButton() {
       <button
         type="button"
         onClick={share}
-        className="inline-flex min-h-11 items-center rounded-full border border-neutral-300 px-6 text-[15px] text-neutral-700"
+        className="inline-flex min-h-11 items-center rounded-full border border-neutral-300 px-6 text-[13px] text-neutral-700"
       >
         청첩장 공유하기
       </button>
-      <p role="status" aria-live="polite" className="min-h-[1.5em] text-[13px] text-neutral-500">{message}</p>
+      {/* <p role="status" aria-live="polite" className="min-h-[1.5em] text-[13px] text-neutral-500">{message}</p> */}
       {showLink && (
         <a href={SITE.url} className="max-w-[80vw] select-all text-center text-[13px] text-neutral-700 underline">
           {SITE.url}
