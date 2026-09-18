@@ -56,7 +56,6 @@ export const ALBUM_PHOTOS: Photo[] = [
   // 5000번대
   { src: '/images/complete/IMG_5085-2.JPG', alt: '재훈과 지은의 웨딩 사진' },
   { src: '/images/complete/IMG_5260-2.JPG', alt: '재훈과 지은의 웨딩 사진' },
-  { src: '/images/complete/IMG_5262-2.JPG', alt: '재훈과 지은의 웨딩 사진' },
   { src: '/images/complete/IMG_5263-2.JPG', alt: '재훈과 지은의 웨딩 사진' },
   { src: '/images/complete/IMG_5264-2.JPG', alt: '재훈과 지은의 웨딩 사진' },
   { src: '/images/complete/IMG_5266-3.JPG', alt: '재훈과 지은의 웨딩 사진' },
@@ -97,14 +96,11 @@ export const ALBUM_PHOTOS: Photo[] = [
   { src: '/images/complete/IMG_5387.JPG', alt: '재훈과 지은의 웨딩 사진' },
   { src: '/images/complete/IMG_5388.JPG', alt: '재훈과 지은의 웨딩 사진' },
   { src: '/images/complete/IMG_5389.JPG', alt: '재훈과 지은의 웨딩 사진' },
-  { src: '/images/complete/IMG_5390.JPG', alt: '재훈과 지은의 웨딩 사진' },
-  { src: '/images/complete/IMG_5391.JPG', alt: '재훈과 지은의 웨딩 사진' },
   // 3000번대
   { src: '/images/complete/IMG_3744.JPG', alt: '재훈과 지은의 웨딩 사진' },
   { src: '/images/complete/IMG_3745.JPG', alt: '재훈과 지은의 웨딩 사진' },
   { src: '/images/complete/IMG_3746.JPG', alt: '재훈과 지은의 웨딩 사진' },
   { src: '/images/complete/IMG_3748-2.JPG', alt: '재훈과 지은의 웨딩 사진' },
-  { src: '/images/complete/IMG_3751.JPG', alt: '재훈과 지은의 웨딩 사진' },
   { src: '/images/complete/IMG_3752.JPG', alt: '재훈과 지은의 웨딩 사진' },
   { src: '/images/complete/IMG_3753.JPG', alt: '재훈과 지은의 웨딩 사진' },
   { src: '/images/complete/IMG_3758.JPG', alt: '재훈과 지은의 웨딩 사진' },

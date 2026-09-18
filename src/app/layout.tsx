@@ -8,6 +8,7 @@ const myeongjo = localFont({ src: '../../public/fonts/NanumMyeongjo-Regular.ttf'
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  minimumScale: 1,
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
@@ -22,6 +23,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="ko" className={myeongjo.variable}>
       <head>
+        {/* 일부 인앱/구형 브라우저용 확대 방지 메타 (Next viewport와 병행) */}
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+        />
         {/* JS 미실행 시 등장 애니메이션 초기 상태(숨김)에서 콘텐츠가 그대로 보이도록 */}
         <noscript>
           <style>{`[data-reveal]{opacity:1 !important;transform:none !important}`}</style>

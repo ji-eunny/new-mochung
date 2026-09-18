@@ -13,15 +13,19 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    touch-action: manipulation;
+    /* pinch-zoom 제외: 더블탭·핀치 확대 차단, 스크롤만 허용 */
+    touch-action: pan-x pan-y;
   }
   body {
     margin: 0;
     background: #ffffff;
     color: #111111;
     font-family: var(--font-myeongjo), 'AppleMyungjo', 'Batang', serif;
-    touch-action: manipulation;
+    touch-action: pan-x pan-y;
     overscroll-behavior: none;
+  }
+  img, video, button, a, input, textarea {
+    touch-action: pan-x pan-y;
   }
   /* 자동 줄바꿈 금지. 의도된 <br>만 개행. (350px 이하에서만 줄바꿈 허용) */
   p, span, time, a, button, li, label, h1, h2, h3, h4, h5, h6, footer, strong, em {

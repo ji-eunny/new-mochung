@@ -1,34 +1,32 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { assetPath } from '@/lib/asset';
 
-/**
- * 배경음악 토글. 우상단 스피커 버튼으로 켜고/끈다.
- *
- * 유튜브는 mp4/mp3 파일 직접 재생 링크를 제공하지 않으므로, 숨긴 유튜브 임베드
- * 플레이어를 postMessage(enablejsapi)로 제어한다. 사용자의 버튼 클릭이 재생을
- * 트리거하므로 브라우저 자동재생(소리) 정책에도 걸리지 않는다.
- *
- * mp3 파일이 있으면 이 컴포넌트를 <audio>로 교체하는 편이 가볍다.
- */
-const VIDEO_ID = 'ih_j2A6Pnms';
+/** 배경음악 토글. 우상단 스피커로 public m4a를 재생/일시정지. */
+const BGM_SRC = assetPath('/our-story-begins.m4a');
 
 export default function BgmToggle() {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
 
-  const send = (func: 'playVideo' | 'pauseVideo') => {
-    iframeRef.current?.contentWindow?.postMessage(
-      JSON.stringify({ event: 'command', func, args: [] }),
-      '*',
-    );
-  };
+  const toggle = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
 
-  const toggle = () => {
-    setPlaying(prev => {
-      send(prev ? 'pauseVideo' : 'playVideo');
-      return !prev;
-    });
+    if (playing) {
+      audio.pause();
+      setPlaying(false);
+      return;
+    }
+
+    try {
+      audio.loop = true;
+      await audio.play();
+      setPlaying(true);
+    } catch {
+      setPlaying(false);
+    }
   };
 
   return (
@@ -55,15 +53,16 @@ export default function BgmToggle() {
         )}
       </button>
 
-      {/* 숨긴 BGM 플레이어 (display:none이면 재생이 멈추므로 1px로 유지) */}
-      <iframe
-        ref={iframeRef}
-        title="배경음악 플레이어"
-        src={`https://www.youtube.com/embed/${VIDEO_ID}?enablejsapi=1&loop=1&playlist=${VIDEO_ID}&controls=0&playsinline=1&rel=0`}
-        allow="autoplay; encrypted-media"
+      <audio
+        ref={audioRef}
+        src={BGM_SRC}
+        preload="metadata"
+        playsInline
+        loop
         aria-hidden="true"
-        tabIndex={-1}
-        className="pointer-events-none fixed bottom-0 right-0 h-px w-px border-0 opacity-0"
+        onEnded={() => setPlaying(false)}
+        onPause={() => setPlaying(false)}
+        onPlay={() => setPlaying(true)}
       />
     </>
   );
