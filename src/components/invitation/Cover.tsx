@@ -19,7 +19,7 @@ export default function Cover() {
         <span className={`${serif} absolute -right-7 bottom-[-2%] translate-y-1/2 text-[52px] font-normal leading-none tracking-tight`}>JIEUN</span>
       </Reveal>
       <Reveal delay={220} className="absolute inset-x-0 bottom-[7svh] text-center">
-        <time dateTime="2027-02-13" className={`${serif} text-[20px]`}>2027.&nbsp;  Feb. 13</time>
+        <time dateTime="2027-02-13" className={`${serif} text-[18px]`}>2027.&nbsp;  Feb. 13</time>
       </Reveal>
     </Section>
   );

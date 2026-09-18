@@ -2,8 +2,8 @@
 
 /* 인사말용 손글씨 글꼴 (projectnoonnu) */
 @font-face {
-  font-family: 'Eonggeongkwi';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/naverfont_11@1.0/Unggungqui.woff') format('woff');
+  font-family: 'GaramYeonGeot';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/naverfont_04@1.0/Garam.woff') format('woff');
   font-weight: normal;
   font-display: swap;
 }

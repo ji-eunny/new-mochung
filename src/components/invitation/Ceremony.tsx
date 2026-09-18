@@ -1,4 +1,5 @@
 import { WEDDING } from '@/lib/invitation';
+import { assetPath } from '@/lib/asset';
 import Photo from './Photo';
 import Section from './Section';
 import Reveal from './Reveal';
@@ -16,12 +17,20 @@ export default function Ceremony() {
         <p className="mt-1">김동기 · 현경희의 딸<strong className="font-bold"> 지은</strong></p>
       </Reveal>
 
-      <Reveal delay={120} className="my-2 w-[72%] max-w-[250px]">
-        <Photo
-          photo={{ src: '/images/information-photo.png', alt: '데크 위에서 마주한 재훈과 지은' }}
-          sizes="250px"
-          className="w-full aspect-[1024/682]"
-        />
+      <Reveal delay={120} className="relative my-2 w-[72%] max-w-[250px]">
+        <div className="relative aspect-[1024/682] w-full">
+          <Photo
+            photo={{ src: '/images/complete/IMG_5379.JPG', alt: '데크 위에서 마주한 재훈과 지은' }}
+            sizes="250px"
+            className="h-full w-full"
+          />
+          <img
+            src={assetPath('/images/vintage.png')}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-10 h-full w-full object-fill brightness-0 invert"
+          />
+        </div>
       </Reveal>
 
       <Reveal delay={120} className="leading-[1.7]">

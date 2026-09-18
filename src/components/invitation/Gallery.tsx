@@ -16,10 +16,9 @@ export default function Gallery() {
 
   return (
     <Section aria-label="사진첩" className="min-h-0 justify-start gap-0 px-5 py-14">
-      {/* 고정 px 간격(gap-6)으로 PC·모바일 동일하게 */}
       <div className="flex w-full flex-col items-center gap-10">
         <Reveal className="w-full max-w-[320px]">
-          <Photo photo={PHOTOS.veil} sizes="320px" className="w-full aspect-[6/4] mt-12" />
+          <Photo photo={PHOTOS.veil} sizes="320px" className="mt-12 w-full aspect-[6/4]" />
         </Reveal>
 
         <div className="grid w-full grid-cols-3 gap-0">
