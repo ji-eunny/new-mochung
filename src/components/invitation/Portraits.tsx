@@ -1,16 +1,11 @@
+import { PHOTOS } from '@/lib/invitation';
 import Photo from './Photo';
 import Section from './Section';
 import Reveal from './Reveal';
 
-const PORTRAIT_PHOTOS = [
-  { src: '/images/complete/IMG_5370.JPG', alt: '재훈과 지은의 웨딩 사진' },
-  { src: '/images/complete/IMG_5259-2.JPG', alt: '재훈과 지은의 웨딩 사진' },
-  { src: '/images/complete/IMG_5265-3.JPG', alt: '재훈과 지은의 웨딩 사진' },
-] as const;
-
 /** 4p. 사진 세 장을 엇갈리게 배치한 콜라주(좌상 · 우하 · 하단중앙). */
 export default function Portraits() {
-  const [left, right, bottom] = PORTRAIT_PHOTOS;
+  const [left, right, bottom] = PHOTOS.portraits;
 
   return (
     <Section aria-label="우리의 웨딩 사진" className="px-5">

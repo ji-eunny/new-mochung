@@ -1,4 +1,4 @@
-import { WEDDING } from '@/lib/invitation';
+import { PHOTOS, WEDDING } from '@/lib/invitation';
 import { assetPath } from '@/lib/asset';
 import Photo from './Photo';
 import Section from './Section';
@@ -6,9 +6,6 @@ import Reveal from './Reveal';
 
 /** 3p. 혼주 소개 + 예식 사진 + 일시/장소 + 지도 링크. */
 export default function Ceremony() {
-  const query = encodeURIComponent(WEDDING.mapQuery);
-  const mapLink = 'inline-flex min-h-11 items-center rounded-full border border-neutral-300 px-6 py-2 text-[16px]';
-
   return (
     <Section aria-label="혼주와 예식 안내" className="gap-12 text-center">
       <Reveal><p className="text-gray-400"><span>*</span> INFORMATION <span>*</span></p></Reveal>
@@ -20,7 +17,7 @@ export default function Ceremony() {
       <Reveal delay={120} className="relative my-2 w-[72%] max-w-[250px]">
         <div className="relative aspect-[1024/682] w-full">
           <Photo
-            photo={{ src: '/images/complete/IMG_5379.JPG', alt: '데크 위에서 마주한 재훈과 지은' }}
+            photo={PHOTOS.ceremony}
             sizes="250px"
             className="h-full w-full"
           />

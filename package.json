@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:https": "next dev --experimental-https -H 0.0.0.0",
-    "build": "next build",
-    "build:gh": "next build && touch out/.nojekyll",
+    "sync:album": "node scripts/sync-album.mjs",
+    "dev": "npm run sync:album && next dev",
+    "dev:https": "npm run sync:album && next dev --experimental-https -H 0.0.0.0",
+    "build": "npm run sync:album && next build",
+    "build:gh": "npm run sync:album && next build && touch out/.nojekyll",
     "deploy": "npm run build:gh && npx --yes gh-pages@6 -d out -b gh-pages -r https://github.com/ji-eunny/new-mochung.git -t -m \"deploy: GitHub Pages\"",
     "start": "next start",
     "lint": "eslint"

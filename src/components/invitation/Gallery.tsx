@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ALBUM_PHOTOS, PHOTOS, type Photo as PhotoData } from '@/lib/invitation';
+import { ALBUM_PHOTOS, PHOTOS } from '@/lib/invitation';
 import Photo from './Photo';
 import Section from './Section';
 import Reveal from './Reveal';
@@ -9,10 +9,9 @@ import Lightbox from './Lightbox';
 
 const album = ALBUM_PHOTOS;
 
-/** 5p. 대표 사진 + 3×2 그리드(마지막 칸은 "더보기" → 슬라이드 팝업). */
+/** 5p. 대표 사진 + 3×2 그리드(마지막 칸 "더보기"만 라이트박스 오픈). */
 export default function Gallery() {
-  const [selected, setSelected] = useState<number | null>(null);
-  const open = (photo: PhotoData) => setSelected(album.findIndex(item => item.src === photo.src));
+  const [open, setOpen] = useState(false);
 
   return (
     <Section aria-label="사진첩" className="min-h-0 justify-start gap-0 px-5 py-14">
@@ -26,27 +25,32 @@ export default function Gallery() {
             const isMore = index === PHOTOS.grid.length - 1;
             return (
               <Reveal key={photo.src} delay={index * 90} className="aspect-[4/6] w-full">
-                <button
-                  className="relative block h-full w-full"
-                  onClick={() => open(photo)}
-                  aria-haspopup={isMore ? 'dialog' : undefined}
-                  aria-label={isMore ? '사진 더보기, 슬라이드로 크게 보기' : `${photo.alt} 크게 보기`}
-                >
-                  <Photo photo={photo} sizes="30vw" className="h-full w-full" />
-                  {isMore && (
+                {isMore ? (
+                  <button
+                    type="button"
+                    className="relative block h-full w-full"
+                    onClick={() => setOpen(true)}
+                    aria-haspopup="dialog"
+                    aria-label="사진 더보기, 슬라이드로 크게 보기"
+                  >
+                    <Photo photo={photo} sizes="30vw" className="h-full w-full" />
                     <span className="absolute inset-0 grid place-items-center bg-black/35 text-[17px] text-white">
                       더보기
                     </span>
-                  )}
-                </button>
+                  </button>
+                ) : (
+                  <div className="relative h-full w-full">
+                    <Photo photo={photo} sizes="30vw" className="h-full w-full" />
+                  </div>
+                )}
               </Reveal>
             );
           })}
         </div>
       </div>
 
-      {selected !== null && (
-        <Lightbox photos={album} initialIndex={selected} onClose={() => setSelected(null)} />
+      {open && (
+        <Lightbox key="album" photos={album} initialIndex={0} onClose={() => setOpen(false)} />
       )}
     </Section>
   );
