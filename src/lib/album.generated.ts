@@ -41,10 +41,5 @@ export const ALBUM_FILES = [
   "39.JPG",
   "40.JPG",
   "41.JPG",
-  "42.JPG",
-  "43.JPG",
-  "44.JPG",
-  "45.JPG",
-  "46.JPG",
-  "47.JPG"
+  "42.JPG"
 ] as const;
