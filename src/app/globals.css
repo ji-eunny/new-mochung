@@ -61,14 +61,14 @@
    - 의도된 연출이라 prefers-reduced-motion으로 끄지 않는다(모바일 '동작 줄이기'에서도 재생). */
 [data-reveal][data-armed='true'] {
   opacity: 0;
-  transform: translateY(28px);
-  /* 뷰포트 밖으로 나갈 때는 즉시 숨김(역재생 없음) */
+  transform: translateY(20px);
   transition: none;
+  will-change: opacity, transform;
 }
 [data-reveal][data-armed='true'][data-visible='true'] {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1), transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* 축하 폭죽: 한 번에 위로, 올라오며 선명해짐(CelebrateButton). 하단 생성 구간은 컨테이너 clip으로 숨김. */

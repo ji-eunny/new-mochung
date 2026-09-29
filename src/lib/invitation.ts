@@ -13,6 +13,31 @@ export const WEDDING = {
   parking: '건물 내 B2~B5 / 만차 시 5분 거리 롯데백화점 이용',
 };
 
+/** LOCATION 아래 NOTICE — 하객 안내 */
+export const NOTICES = [
+  {
+    title: '주차안내',
+    lines: [
+      '예식장 건물 내 B2~B5 주차장을',
+      '이용하실 수 있습니다.',
+      '* 만차 시 5분 거리 롯데백화점 이용',
+      '',
+      '기계식 주차 포함으로,',
+      '대중교통 이용을 권장드립니다.',
+    ],
+  },
+  {
+    title: '포토부스',
+    lines: [
+      '소중한 날을 기록할 수 있도록',
+      '포토부스가 마련되어 있습니다.',
+      '',
+      '부담 없이 촬영하시고',
+      '즐거운 추억으로 간직해 주세요.',
+    ],
+  },
+] as const;
+
 export type Account = { role: string; name: string; bank: string; number: string };
 export const ACCOUNTS: Record<'groom' | 'bride', Account[]> = {
   groom: [

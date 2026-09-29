@@ -1,10 +1,12 @@
 import Cover from '@/components/invitation/Cover';
 import Greeting from '@/components/invitation/Greeting';
 import Ceremony from '@/components/invitation/Ceremony';
+import WeddingVideo from '@/components/invitation/WeddingVideo';
 import WeddingDay from '@/components/invitation/WeddingDay';
 import Portraits from '@/components/invitation/Portraits';
 import Gallery from '@/components/invitation/Gallery';
 import Location from '@/components/invitation/Location';
+import Notice from '@/components/invitation/Notice';
 import Accounts from '@/components/invitation/Accounts';
 import Closing from '@/components/invitation/Closing';
 
@@ -15,10 +17,12 @@ export default function Home() {
       <Cover />
       <Greeting />
       <Ceremony />
+      <WeddingVideo />
       <WeddingDay />
       <Portraits />
       <Gallery />
       <Location />
+      <Notice />
       <Accounts />
       <Closing />
     </main>

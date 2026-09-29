@@ -4,7 +4,7 @@ import Photo from './Photo';
 import Section from './Section';
 import Reveal from './Reveal';
 
-/** 3p. 혼주 소개 + 예식 사진 + 일시/장소 + 지도 링크. */
+/** 3p. 혼주 소개 + 예식 사진 + 일시/장소. */
 export default function Ceremony() {
   return (
     <Section aria-label="혼주와 예식 안내" className="gap-12 text-center">
