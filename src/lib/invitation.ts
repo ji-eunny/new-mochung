@@ -49,7 +49,7 @@ export const PHOTOS = {
   pajamas: { src: '/images/reference/pajamas.webp', alt: '잠옷을 입고 도넛을 즐기는 두 사람' },
   /** 앨범(Gallery) 대표 사진 — 라이트박스에서는 제외 */
   veil: photo(9, '재훈과 지은의 웨딩 사진', '20% 20%'),
-  /** 마지막 칸은 더보기 썸네일(이미 섹션 제외인 9 사용 → 28은 앨범에 유지) */
+  /** 마지막 칸은 더보기 썸네일(28) — 앨범에도 포함(아래 ALBUM_INCLUDE) */
   grid: [photo(26), photo(19), photo(14), photo(21), photo(20), photo(28)],
   accounts: { src: '/images/DSC00451.JPG', alt: '반지를 보여주며 활짝 웃는 재훈과 지은' },
   closing: { src: '/images/reference/closing.webp', alt: '손을 잡고 감사 인사를 하는 두 사람' },
@@ -65,7 +65,10 @@ const SECTION_PHOTO_SRCS = new Set(
 /** 더보기 팝업에서만 추가로 숨길 번호 (구 15 → 리넘버 후 14) */
 const ALBUM_EXCLUDE_SRCS = new Set([photo(14).src]);
 
-/** 앨범 라이트박스 — 섹션 사용분·추가 제외, 숫자 오름차순 (`npm run sync:album`) */
+/** 그리드(더보기 썸네일)에 있어도 앨범에 넣을 번호 */
+const ALBUM_INCLUDE_SRCS = new Set([photo(28).src]);
+
+/** 앨범 라이트박스 — 섹션 사용분·추가 제외(+포함 예외), 숫자 오름차순 */
 export const ALBUM_PHOTOS: Photo[] = ALBUM_FILES
   .map(file => ({ src: `/images/complete/${file}`, alt: '재훈과 지은의 웨딩 사진' }))
-  .filter(p => !SECTION_PHOTO_SRCS.has(p.src) && !ALBUM_EXCLUDE_SRCS.has(p.src));
+  .filter(p => ALBUM_INCLUDE_SRCS.has(p.src) || (!SECTION_PHOTO_SRCS.has(p.src) && !ALBUM_EXCLUDE_SRCS.has(p.src)));
