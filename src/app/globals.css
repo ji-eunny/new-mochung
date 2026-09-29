@@ -13,19 +13,24 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    /* pinch-zoom 제외: 더블탭·핀치 확대 차단, 스크롤만 허용 */
-    touch-action: pan-x pan-y;
+    /* manipulation: 더블탭 확대 차단 + 스크롤/탭 허용 (pinch-zoom 미포함) */
+    touch-action: manipulation;
   }
   body {
     margin: 0;
     background: #ffffff;
     color: #111111;
     font-family: var(--font-myeongjo), 'AppleMyungjo', 'Batang', serif;
-    touch-action: pan-x pan-y;
+    touch-action: manipulation;
     overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
   }
   img, video, button, a, input, textarea {
-    touch-action: pan-x pan-y;
+    touch-action: manipulation;
+  }
+  /* iOS 입력 포커스 시 자동 확대 방지 */
+  input, textarea, select {
+    font-size: 16px;
   }
   /* 자동 줄바꿈 금지. 의도된 <br>만 개행. (350px 이하에서만 줄바꿈 허용) */
   p, span, time, a, button, li, label, h1, h2, h3, h4, h5, h6, footer, strong, em {
@@ -57,11 +62,13 @@
 [data-reveal][data-armed='true'] {
   opacity: 0;
   transform: translateY(28px);
-  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  /* 뷰포트 밖으로 나갈 때는 즉시 숨김(역재생 없음) */
+  transition: none;
 }
 [data-reveal][data-armed='true'][data-visible='true'] {
   opacity: 1;
   transform: translateY(0);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* 축하 폭죽: 한 번에 위로, 올라오며 선명해짐(CelebrateButton). 하단 생성 구간은 컨테이너 clip으로 숨김. */
