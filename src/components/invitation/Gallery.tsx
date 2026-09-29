@@ -24,7 +24,7 @@ export default function Gallery() {
           {PHOTOS.grid.map((photo, index) => {
             const isMore = index === PHOTOS.grid.length - 1;
             return (
-              <Reveal key={photo.src} delay={index * 90} className="aspect-[4/6] w-full">
+              <Reveal key={`${photo.src}-${index}`} delay={index * 90} className="aspect-[4/6] w-full">
                 {isMore ? (
                   <button
                     type="button"
