@@ -1,18 +1,92 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
 import { assetPath } from '@/lib/asset';
 import Section from './Section';
 import Reveal from './Reveal';
-import ClosingVideo from './ClosingVideo';
 
-/** INFORMATION ↔ WEDDING DAY. 타이틀 없이 영상만. */
+const SRC = assetPath('/images/wedding.MOV');
+
+/** INFORMATION ↔ WEDDING DAY. 타이틀 없이 영상만, 재생 버튼으로 재생. */
 export default function WeddingVideo() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !('IntersectionObserver' in window)) return;
+
+    const observer = new IntersectionObserver(
+      entries => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting && !video.paused) {
+            video.pause();
+            setPlaying(false);
+          }
+        }
+      },
+      { threshold: 0.15 },
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+
+  const toggle = async () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (!video.paused) {
+      video.pause();
+      setPlaying(false);
+      return;
+    }
+
+    try {
+      video.muted = true;
+      await video.play();
+      setPlaying(true);
+    } catch {
+      setPlaying(false);
+    }
+  };
+
   return (
     <Section aria-label="웨딩 영상" className="min-h-0 justify-center gap-0 px-0 pb-10 pt-0">
       <Reveal className="w-full">
-        <ClosingVideo
-          className="block h-auto w-full"
-          src={assetPath('/images/wedding.MOV')}
-          alt="재훈과 지은의 웨딩 영상"
-        />
+        <div className="relative w-full overflow-hidden">
+          <video
+            ref={videoRef}
+            className="block h-auto w-full"
+            src={SRC}
+            aria-label="재훈과 지은의 웨딩 영상"
+            muted
+            playsInline
+            preload="metadata"
+            controls={false}
+            onEnded={() => setPlaying(false)}
+            onPause={() => setPlaying(false)}
+            onPlay={() => setPlaying(true)}
+          />
+
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label={playing ? '영상 일시정지' : '영상 재생'}
+            className={
+              playing
+                ? 'absolute inset-0 z-10 bg-transparent'
+                : 'absolute inset-0 z-10 grid place-items-center bg-black/20'
+            }
+          >
+            {!playing && (
+              <span className="grid h-14 w-14 place-items-center rounded-full bg-white/85 text-neutral-800 shadow-sm backdrop-blur-sm">
+                <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" className="ml-0.5">
+                  <path fill="currentColor" d="M8 5.5v13l11-6.5L8 5.5z" />
+                </svg>
+              </span>
+            )}
+          </button>
+        </div>
       </Reveal>
     </Section>
   );
