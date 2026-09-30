@@ -64,60 +64,39 @@ export default function DisableZoom() {
     // --------------------------------------------------
     const onTouchStart = (event: TouchEvent) => {
       activeTouches = event.touches.length;
-
-      // ----------------------------------------------
-      // 중요:
-      // 두 손가락 이상은 data-allow-tap 여부와 관계없이
-      // 무조건 핀치 줌 차단
-      // ----------------------------------------------
-      if (event.touches.length > 1) {
-        event.preventDefault();
-
-        blockOneFingerZoom = false;
-
-        return;
-      }
-
-      const touch = event.touches[0];
-
-      if (!touch) {
-        return;
-      }
-
-      // ----------------------------------------------
-      // 버튼 / 링크 / 영상 재생 버튼 등
-      //
-      // 정상적인 클릭이 발생해야 하므로
-      // 여기서는 preventDefault 하지 않음
-      // ----------------------------------------------
+    
+      // ⭐ 재생 버튼 등 허용된 터치는 가장 먼저 통과
       if (isAllowedTap(event.target)) {
         blockOneFingerZoom = false;
-
-        lastTapAt = Date.now();
-        lastTapX = touch.clientX;
-        lastTapY = touch.clientY;
-
+    
+        const touch = event.touches[0];
+    
+        if (touch) {
+          lastTapAt = Date.now();
+          lastTapX = touch.clientX;
+          lastTapY = touch.clientY;
+        }
+    
         return;
       }
-
-      // ----------------------------------------------
-      // 일반 영역
-      // ----------------------------------------------
+    
+      // 두 손가락은 무조건 차단
+      if (event.touches.length > 1) {
+        event.preventDefault();
+        blockOneFingerZoom = false;
+        return;
+      }
+    
+      const touch = event.touches[0];
+    
+      if (!touch) return;
+    
       const now = Date.now();
-
       const timeSinceLastTap = now - lastTapAt;
-
-      const distanceX = Math.abs(
-        touch.clientX - lastTapX,
-      );
-
-      const distanceY = Math.abs(
-        touch.clientY - lastTapY,
-      );
-
-      // ----------------------------------------------
-      // 더블탭 확대 차단
-      // ----------------------------------------------
+    
+      const distanceX = Math.abs(touch.clientX - lastTapX);
+      const distanceY = Math.abs(touch.clientY - lastTapY);
+    
       if (
         timeSinceLastTap > 0 &&
         timeSinceLastTap < 320 &&
@@ -125,13 +104,11 @@ export default function DisableZoom() {
         distanceY < 36
       ) {
         event.preventDefault();
-
-        // 더블탭 이후 한 손가락 드래그 확대도 차단
         blockOneFingerZoom = true;
       } else {
         blockOneFingerZoom = false;
       }
-
+    
       lastTapAt = now;
       lastTapX = touch.clientX;
       lastTapY = touch.clientY;
@@ -142,35 +119,22 @@ export default function DisableZoom() {
     // --------------------------------------------------
     const onTouchMove = (event: TouchEvent) => {
       activeTouches = event.touches.length;
-
-      // ----------------------------------------------
-      // 두 손가락 이상
-      //
-      // 한 손가락을 누르고
-      // 다른 손가락으로 확대하는 경우까지 차단
-      // ----------------------------------------------
+    
+      // ⭐ 재생 버튼 위에서는 터치 이벤트를 막지 않음
+      if (isAllowedTap(event.target)) {
+        return;
+      }
+    
+      // 두 손가락 확대 차단
       if (event.touches.length > 1) {
         event.preventDefault();
-
         return;
       }
-
-      // ----------------------------------------------
-      // 더블탭 후 드래그 확대
-      // ----------------------------------------------
+    
+      // 더블탭 확대 방지
       if (blockOneFingerZoom) {
         event.preventDefault();
-
-        return;
       }
-
-      // ----------------------------------------------
-      // 일반 한 손가락 이동
-      //
-      // preventDefault 하지 않음
-      //
-      // → 세로 스크롤 정상 작동
-      // ----------------------------------------------
     };
 
     // --------------------------------------------------

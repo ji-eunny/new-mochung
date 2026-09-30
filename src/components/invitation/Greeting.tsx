@@ -13,7 +13,7 @@ export default function Greeting() {
         <Reveal delay={140} className="aspect-[4/3] w-full"><Photo photo={PHOTOS.camera} sizes="45vw" className="h-full w-full" /></Reveal>
       </div>
       <Reveal delay={120} className="mt-8 w-full pl-2">
-        <p className="text-left font-['GeuriunOmiriHandwriting',cursive] text-[15px] leading-[2.1] text-neutral-700 font-normal">
+        <p className="text-left font-['GeuriunOmiriHandwriting',cursive] text-[16px] leading-[2.1] text-neutral-700 font-normal">
           풋풋했던 스무살의 봄,<br />
           서로의 첫사랑이 된 우리는<br />
           아홉 번의 사계절을 지나<br className="hidden max-[360px]:inline" /> 평생의 연인이 되려 합니다.

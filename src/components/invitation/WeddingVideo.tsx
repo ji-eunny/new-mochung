@@ -1,32 +1,23 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-
 import { assetPath } from '@/lib/asset';
-
 import Section from './Section';
 import Reveal from './Reveal';
 
 const SRC = assetPath('/images/wedding.mov');
 const POSTER = assetPath('/images/wedding-poster.jpg');
 
-/**
- * INFORMATION ↔ WEDDING DAY.
- * 타이틀 없이 영상만, 재생 버튼으로 재생.
- */
 export default function WeddingVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
-
-    if (!video || !('IntersectionObserver' in window)) {
-      return;
-    }
+    if (!video || !('IntersectionObserver' in window)) return;
 
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         for (const entry of entries) {
           if (!entry.isIntersecting && !video.paused) {
             video.pause();
@@ -45,21 +36,21 @@ export default function WeddingVideo() {
   const toggle = async () => {
     const video = videoRef.current;
 
-    if (!video) {
-      return;
-    }
-
-    if (!video.paused) {
-      video.pause();
-      return;
-    }
+    if (!video) return;
 
     try {
-      // 모바일 브라우저에서 재생 가능하도록 명시
+      if (!video.paused) {
+        video.pause();
+        setPlaying(false);
+        return;
+      }
+
+      // 모바일 브라우저 자동재생 정책 대응
       video.muted = true;
       video.playsInline = true;
 
       await video.play();
+      setPlaying(true);
     } catch (error) {
       console.error('영상 재생 실패:', error);
       setPlaying(false);
@@ -73,6 +64,7 @@ export default function WeddingVideo() {
     >
       <Reveal className="w-full">
         <div className="relative aspect-video w-full overflow-hidden bg-neutral-100">
+
           <video
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover"
@@ -86,13 +78,20 @@ export default function WeddingVideo() {
             onEnded={() => setPlaying(false)}
             onPause={() => setPlaying(false)}
             onPlay={() => setPlaying(true)}
+            onError={() => {
+              console.error('영상 파일을 불러오지 못했습니다.', videoRef.current?.error);
+            }}
           />
 
           <button
             type="button"
             data-allow-tap="true"
-            onClick={toggle}
             aria-label={playing ? '영상 일시정지' : '영상 재생'}
+            onPointerUp={event => {
+              event.preventDefault();
+              event.stopPropagation();
+              toggle();
+            }}
             className={
               playing
                 ? 'absolute inset-0 z-20 touch-manipulation bg-transparent'
@@ -106,6 +105,7 @@ export default function WeddingVideo() {
                   width="22"
                   height="22"
                   aria-hidden="true"
+                  className="ml-0.5"
                 >
                   <path
                     fill="currentColor"
@@ -115,6 +115,7 @@ export default function WeddingVideo() {
               </span>
             )}
           </button>
+
         </div>
       </Reveal>
     </Section>
