@@ -40,6 +40,15 @@ export default function DisableZoom() {
       event.preventDefault();
     };
 
+    const isInteractiveTarget = (target: EventTarget | null) => {
+      if (!(target instanceof Element)) return false;
+      return Boolean(
+        target.closest(
+          'button, a, input, textarea, select, label, summary, [role="button"], [data-allow-tap]',
+        ),
+      );
+    };
+
     // --------------------------------------------------
     // 2. 터치 시작
     // --------------------------------------------------
@@ -77,6 +86,7 @@ export default function DisableZoom() {
 
       // ----------------------------------------------
       // 더블탭 확대 방지
+      // 재생/공유 등 버튼·링크 위에서는 preventDefault 금지 (클릭 깨짐)
       // ----------------------------------------------
       if (
         timeSinceLastTap > 0 &&
@@ -84,10 +94,12 @@ export default function DisableZoom() {
         distanceX < 36 &&
         distanceY < 36
       ) {
-        event.preventDefault();
-
-        // 두 번째 탭 이후의 드래그도 차단
-        blockOneFingerZoom = true;
+        if (!isInteractiveTarget(event.target)) {
+          event.preventDefault();
+          blockOneFingerZoom = true;
+        } else {
+          blockOneFingerZoom = false;
+        }
       } else {
         blockOneFingerZoom = false;
       }

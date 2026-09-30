@@ -34,8 +34,8 @@ body {
 }
 
   img, video, button, a, input, textarea {
-    touch-action: pan-y;
-
+    /* 버튼/링크는 탭(클릭) 가능해야 함 — pan-y만 있으면 재생 버튼 등이 안 눌림 */
+    touch-action: manipulation;
   }
   img, video {
     -webkit-user-drag: none;

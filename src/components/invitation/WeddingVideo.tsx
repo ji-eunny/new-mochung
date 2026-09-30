@@ -72,12 +72,13 @@ export default function WeddingVideo() {
 
           <button
             type="button"
+            data-allow-tap=""
             onClick={toggle}
             aria-label={playing ? '영상 일시정지' : '영상 재생'}
             className={
               playing
-                ? 'absolute inset-0 z-10 bg-transparent'
-                : 'absolute inset-0 z-10 grid place-items-center bg-black/20'
+                ? 'absolute inset-0 z-10 touch-manipulation bg-transparent'
+                : 'absolute inset-0 z-10 grid place-items-center touch-manipulation bg-black/20'
             }
           >
             {!playing && (
