@@ -16,7 +16,7 @@ export default function Notice() {
   };
 
   return (
-    <Section aria-label="예식 안내" className="gap-10 text-center min-h-[60svh]">
+    <Section aria-label="예식 안내" className="gap-10 text-center min-h-[70svh]">
       <Reveal>
         <p className="text-gray-400"><span>*</span> NOTICE <span>*</span></p>
       </Reveal>

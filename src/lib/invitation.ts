@@ -46,9 +46,9 @@ export const ACCOUNTS: Record<'groom' | 'bride', Account[]> = {
     { role: '어머니', name: '유상아', bank: '카카오뱅크', number: '1234-1234-1234' },
   ],
   bride: [
-    { role: '신부', name: '김지은', bank: '카카오뱅크', number: '1234-1234-1234' },
-    { role: '아버지', name: '김동기', bank: '카카오뱅크', number: '1234-1234-1234' },
-    { role: '어머니', name: '현경희', bank: '카카오뱅크', number: '1234-1234-1234' },
+    { role: '신부', name: '김지은', bank: '카카오뱅크', number: '3333-16-5452792' },
+    { role: '아버지', name: '김동기', bank: '국민은행', number: '267-21-0146-449' },
+    { role: '어머니', name: '현경희', bank: '농협은행', number: '201030-52-021354' },
   ],
 };
 

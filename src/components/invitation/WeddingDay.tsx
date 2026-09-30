@@ -21,7 +21,7 @@ export default function WeddingDay() {
   while (cells.length % 7 !== 0) cells.push(null);
 
   return (
-    <Section aria-label="예식일 달력" className="gap-9 min-h-[70svh]">
+    <Section aria-label="예식일 달력" className="gap-9 min-h-[100svh]">
       <Reveal>
         <p className="text-gray-400"><span>*</span> WEDDING DAY <span>*</span></p>
       </Reveal>

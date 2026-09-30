@@ -2,8 +2,8 @@
 
 /* 인사말용 손글씨 글꼴 (projectnoonnu) */
 @font-face {
-  font-family: 'GaramYeonGeot';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/naverfont_04@1.0/Garam.woff') format('woff');
+  font-family: 'OngleipRyuryu';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_ryurue-Rg.woff2') format('woff2');
   font-weight: normal;
   font-display: swap;
 }
@@ -32,11 +32,11 @@
   input, textarea, select {
     font-size: 16px;
   }
-  /* 자동 줄바꿈 금지. 의도된 <br>만 개행. (350px 이하에서만 줄바꿈 허용) */
+  /* 자동 줄바꿈 금지. 의도된 <br>만 개행. (360px 이하에서만 줄바꿈 허용) */
   p, span, time, a, button, li, label, h1, h2, h3, h4, h5, h6, footer, strong, em {
     white-space: nowrap;
   }
-  @media (max-width: 350px) {
+  @media (max-width: 360px) {
     p, span, time, a, button, li, label, h1, h2, h3, h4, h5, h6, footer, strong, em {
       white-space: normal;
       word-break: keep-all;

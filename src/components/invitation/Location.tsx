@@ -9,7 +9,7 @@ export default function Location() {
   const query = encodeURIComponent(WEDDING.mapQuery);
 
   return (
-    <Section aria-label="예식장 오시는 길" className="gap-9 text-center min-h-[60svh]">
+    <Section aria-label="예식장 오시는 길" className="gap-9 text-center min-h-[70svh]">
       <Reveal>
         <p className="text-gray-400"><span>*</span> LOCATION <span>*</span></p>
       </Reveal>
