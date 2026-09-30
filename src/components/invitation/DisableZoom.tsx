@@ -5,43 +5,64 @@ import { useEffect } from 'react';
 const VIEWPORT_LOCKED =
   'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
 
-/** 확대가 걸린 경우 viewport meta를 잠깐 풀어 스케일을 1로 되돌린다. */
+let isResetting = false;
+
+function lockViewport() {
+  document.querySelector('meta[name="viewport"]')?.setAttribute('content', VIEWPORT_LOCKED);
+}
+
+/** 확실히 확대된 경우만 (미세 오차로 스크롤 복구가 도는 것 방지) */
+function isClearlyZoomed() {
+  const scale = window.visualViewport?.scale ?? 1;
+  return scale > 1.05;
+}
+
+/**
+ * 확대 고착 복구. 스크롤 중에는 호출하지 않는다.
+ * CSS zoom / overflow 조작은 스크롤을 깨뜨리므로 쓰지 않는다.
+ */
 function resetViewportScale() {
+  if (isResetting || !isClearlyZoomed()) return;
   const meta = document.querySelector('meta[name="viewport"]');
-  if (meta) {
+  if (!meta) return;
+
+  isResetting = true;
+  const scrollY = window.scrollY || window.pageYOffset || 0;
+
+  meta.setAttribute(
+    'content',
+    'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover',
+  );
+
+  window.setTimeout(() => {
     meta.setAttribute(
       'content',
-      'width=device-width, initial-scale=1, minimum-scale=0.1, maximum-scale=1, user-scalable=yes, viewport-fit=cover',
+      'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=yes, viewport-fit=cover',
     );
-    // 다음 프레임에 다시 잠가 실제 배율을 1로 맞춤 (iOS/Chrome 공통 트릭)
-    requestAnimationFrame(() => {
-      meta.setAttribute('content', VIEWPORT_LOCKED);
-      requestAnimationFrame(() => {
-        meta.setAttribute('content', VIEWPORT_LOCKED);
-      });
-    });
-  }
-
-  const html = document.documentElement;
-  const body = document.body;
-  html.style.setProperty('zoom', '1');
-  body.style.setProperty('zoom', '1');
-  html.scrollLeft = 0;
-  body.scrollLeft = 0;
+    window.setTimeout(() => {
+      lockViewport();
+      window.scrollTo(0, scrollY);
+      isResetting = false;
+    }, 80);
+  }, 80);
 }
 
-function isZoomed() {
-  const scale = window.visualViewport?.scale ?? 1;
-  return Math.abs(scale - 1) > 0.01;
-}
-
-/** 모바일 핀치/더블탭, PC Ctrl·Cmd 휠·단축키 확대를 막고, 확대가 걸리면 즉시 1배로 복구한다. */
+/**
+ * 핀치·제스처 확대만 막고, 한 손가락 세로 스크롤은 절대 건드리지 않는다.
+ * 더블탭은 CSS touch-action: manipulation 에 맡긴다.
+ */
 export default function DisableZoom() {
   useEffect(() => {
-    const meta = document.querySelector('meta[name="viewport"]');
-    meta?.setAttribute('content', VIEWPORT_LOCKED);
+    lockViewport();
 
-    const prevent = (event: Event) => event.preventDefault();
+    const prevent = (event: Event) => {
+      event.preventDefault();
+    };
+
+    /** 두 손가락만 차단 — 한 손가락 touchmove에는 preventDefault 금지 */
+    const blockPinch = (event: TouchEvent) => {
+      if (event.touches.length > 1) event.preventDefault();
+    };
 
     const onWheel = (event: WheelEvent) => {
       if (event.ctrlKey || event.metaKey) event.preventDefault();
@@ -63,64 +84,43 @@ export default function DisableZoom() {
       }
     };
 
-    // 핀치 줌 (두 손가락) — 한 손가락 스크롤은 막지 않음
-    const onTouchMove = (event: TouchEvent) => {
-      if (event.touches.length > 1) event.preventDefault();
-    };
-
-    // iOS/Android 더블탭 줌 — 스크롤 제스처는 방해하지 않도록 짧은 간격·단일 터치만
-    let lastTapAt = 0;
-    let lastTapX = 0;
-    let lastTapY = 0;
-    const onTouchEnd = (event: TouchEvent) => {
-      if (event.touches.length > 0 || event.changedTouches.length !== 1) return;
-      const touch = event.changedTouches[0];
-      const now = Date.now();
-      const dt = now - lastTapAt;
-      const dx = Math.abs(touch.clientX - lastTapX);
-      const dy = Math.abs(touch.clientY - lastTapY);
-      if (dt > 0 && dt < 300 && dx < 24 && dy < 24) {
-        event.preventDefault();
-        resetViewportScale();
-      }
-      lastTapAt = now;
-      lastTapX = touch.clientX;
-      lastTapY = touch.clientY;
-    };
-
     const recoverIfZoomed = () => {
-      if (isZoomed()) resetViewportScale();
+      if (isClearlyZoomed()) resetViewportScale();
     };
 
-    document.addEventListener('wheel', onWheel, { passive: false });
-    document.addEventListener('keydown', onKeyDown, { passive: false });
-    document.addEventListener('gesturestart', prevent, { passive: false } as AddEventListenerOptions);
-    document.addEventListener('gesturechange', prevent, { passive: false } as AddEventListenerOptions);
-    document.addEventListener('gestureend', prevent, { passive: false } as AddEventListenerOptions);
-    document.addEventListener('touchmove', onTouchMove, { passive: false });
-    document.addEventListener('touchend', onTouchEnd, { passive: false });
-    document.addEventListener('dblclick', prevent, { passive: false });
+    const opts: AddEventListenerOptions = { passive: false };
+    const optsCapture: AddEventListenerOptions = { passive: false, capture: true };
 
+    document.addEventListener('touchstart', blockPinch, optsCapture);
+    document.addEventListener('touchmove', blockPinch, optsCapture);
+    document.addEventListener('gesturestart', prevent, optsCapture);
+    document.addEventListener('gesturechange', prevent, optsCapture);
+    document.addEventListener('gestureend', prevent, optsCapture);
+    document.addEventListener('dblclick', prevent, opts);
+    document.addEventListener('wheel', onWheel, opts);
+    document.addEventListener('keydown', onKeyDown, opts);
+
+    // resize만 — scroll 리스너는 일반 스크롤과 싸우므로 쓰지 않음
     const viewport = window.visualViewport;
     viewport?.addEventListener('resize', recoverIfZoomed);
-    viewport?.addEventListener('scroll', recoverIfZoomed);
-    window.addEventListener('resize', recoverIfZoomed);
-    // 확대가 걸린 채 남는 경우 주기적으로 복구
-    const timer = window.setInterval(recoverIfZoomed, 400);
+    window.addEventListener('pageshow', recoverIfZoomed);
+
+    // 드물게 고착됐을 때만 복구 (스크롤과 안 겹치게 느리게)
+    const timer = window.setInterval(recoverIfZoomed, 1200);
 
     return () => {
+      document.removeEventListener('touchstart', blockPinch, true);
+      document.removeEventListener('touchmove', blockPinch, true);
+      document.removeEventListener('gesturestart', prevent, true);
+      document.removeEventListener('gesturechange', prevent, true);
+      document.removeEventListener('gestureend', prevent, true);
+      document.removeEventListener('dblclick', prevent);
       document.removeEventListener('wheel', onWheel);
       document.removeEventListener('keydown', onKeyDown);
-      document.removeEventListener('gesturestart', prevent);
-      document.removeEventListener('gesturechange', prevent);
-      document.removeEventListener('gestureend', prevent);
-      document.removeEventListener('touchmove', onTouchMove);
-      document.removeEventListener('touchend', onTouchEnd);
-      document.removeEventListener('dblclick', prevent);
       viewport?.removeEventListener('resize', recoverIfZoomed);
-      viewport?.removeEventListener('scroll', recoverIfZoomed);
-      window.removeEventListener('resize', recoverIfZoomed);
+      window.removeEventListener('pageshow', recoverIfZoomed);
       window.clearInterval(timer);
+      lockViewport();
     };
   }, []);
 

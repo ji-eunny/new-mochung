@@ -52,7 +52,7 @@ export default function WeddingVideo() {
   };
 
   return (
-    <Section aria-label="웨딩 영상" className="min-h-0 justify-center gap-0 px-0 pb-10 pt-0">
+    <Section aria-label="웨딩 영상" className="min-h-0 justify-center gap-0 px-0 pb-10 pt-10">
       <Reveal className="w-full">
         <div className="relative aspect-video w-full overflow-hidden bg-neutral-100">
           <video

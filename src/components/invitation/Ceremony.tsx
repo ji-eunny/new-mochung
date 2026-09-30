@@ -7,7 +7,7 @@ import Reveal from './Reveal';
 /** 3p. 혼주 소개 + 예식 사진 + 일시/장소. */
 export default function Ceremony() {
   return (
-    <Section aria-label="혼주와 예식 안내" className="gap-12 text-center">
+    <Section aria-label="혼주와 예식 안내" className="gap-12 text-center min-h-[80svh]">
       <Reveal><p className="text-gray-400"><span>*</span> INFORMATION <span>*</span></p></Reveal>
       <Reveal className="text-[14px] leading-[2] mt-2">
         <p>장석균 · 유상아의 아들<strong className="font-bold"> 재훈</strong></p>
