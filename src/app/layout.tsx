@@ -19,15 +19,20 @@ export const metadata: Metadata = {
   title: SITE.title,
   description: SITE.description,
   openGraph: {
-    title: ' ',
-    description: ' ',
+    title: SITE.title,
+    description: SITE.description,
     url: SITE.url,
-    siteName: ' ',
+    siteName: SITE.title,
     type: 'website',
     locale: 'ko_KR',
     images: [{ url: SITE.ogImage, width: 1200, height: 630, alt: SITE.title }],
   },
-  twitter: { card: 'summary_large_image', title: ' ', description: ' ', images: [SITE.ogImage] },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE.title,
+    description: SITE.description,
+    images: [SITE.ogImage],
+  },
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

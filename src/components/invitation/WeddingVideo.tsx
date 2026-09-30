@@ -6,6 +6,7 @@ import Section from './Section';
 import Reveal from './Reveal';
 
 const SRC = assetPath('/images/wedding.MOV');
+const POSTER = assetPath('/images/wedding-poster.jpg');
 
 /** INFORMATION ↔ WEDDING DAY. 타이틀 없이 영상만, 재생 버튼으로 재생. */
 export default function WeddingVideo() {
@@ -53,11 +54,12 @@ export default function WeddingVideo() {
   return (
     <Section aria-label="웨딩 영상" className="min-h-0 justify-center gap-0 px-0 pb-10 pt-0">
       <Reveal className="w-full">
-        <div className="relative w-full overflow-hidden">
+        <div className="relative aspect-video w-full overflow-hidden bg-neutral-100">
           <video
             ref={videoRef}
-            className="block h-auto w-full"
+            className="absolute inset-0 h-full w-full object-cover"
             src={SRC}
+            poster={POSTER}
             aria-label="재훈과 지은의 웨딩 영상"
             muted
             playsInline

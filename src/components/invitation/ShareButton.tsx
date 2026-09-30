@@ -20,7 +20,7 @@ export default function ShareButton() {
     // 1) 네이티브 공유 (HTTPS 보안 컨텍스트에서만 제공됨)
     if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
       try {
-        await navigator.share({ url });
+        await navigator.share({ title: SITE.title, text: SITE.description, url });
         return;
       } catch (error) {
         // 사용자가 취소한 경우엔 조용히 종료
