@@ -5,15 +5,18 @@ import { assetPath } from '@/lib/asset';
 import Section from './Section';
 import Reveal from './Reveal';
 
-const SRC = assetPath('/images/wedding.mov');
+const SRC = assetPath('/images/wedding.mp4');
 const POSTER = assetPath('/images/wedding-poster.jpg');
 
 export default function WeddingVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
+
   const [playing, setPlaying] = useState(false);
+  const [debug, setDebug] = useState('대기 중');
 
   useEffect(() => {
     const video = videoRef.current;
+
     if (!video || !('IntersectionObserver' in window)) return;
 
     const observer = new IntersectionObserver(
@@ -22,6 +25,7 @@ export default function WeddingVideo() {
           if (!entry.isIntersecting && !video.paused) {
             video.pause();
             setPlaying(false);
+            setDebug('화면에서 벗어나 영상 정지');
           }
         }
       },
@@ -36,24 +40,40 @@ export default function WeddingVideo() {
   const toggle = async () => {
     const video = videoRef.current;
 
-    if (!video) return;
+    if (!video) {
+      setDebug('❌ video 요소를 찾지 못함');
+      return;
+    }
+
+    setDebug('① 버튼 터치됨');
 
     try {
       if (!video.paused) {
         video.pause();
         setPlaying(false);
+        setDebug('② 영상 일시정지');
         return;
       }
 
-      // 모바일 브라우저 자동재생 정책 대응
+      setDebug('② 재생 시도 중...');
+
       video.muted = true;
       video.playsInline = true;
 
       await video.play();
+
       setPlaying(true);
+      setDebug('③ ✅ 재생 성공');
     } catch (error) {
-      console.error('영상 재생 실패:', error);
+      console.error(error);
+
       setPlaying(false);
+
+      setDebug(
+        `❌ 재생 실패: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
     }
   };
 
@@ -75,11 +95,33 @@ export default function WeddingVideo() {
             playsInline
             preload="metadata"
             controls={false}
-            onEnded={() => setPlaying(false)}
-            onPause={() => setPlaying(false)}
-            onPlay={() => setPlaying(true)}
+            onLoadedMetadata={() => {
+              setDebug('영상 파일 로드 완료');
+            }}
+            onCanPlay={() => {
+              setDebug('영상 재생 가능');
+            }}
+            onPlay={() => {
+              setPlaying(true);
+              setDebug('▶️ 영상 재생 이벤트 발생');
+            }}
+            onPause={() => {
+              setPlaying(false);
+            }}
+            onEnded={() => {
+              setPlaying(false);
+              setDebug('영상 재생 완료');
+            }}
             onError={() => {
-              console.error('영상 파일을 불러오지 못했습니다.', videoRef.current?.error);
+              const error = videoRef.current?.error;
+
+              setDebug(
+                `❌ 영상 파일 오류: ${
+                  error
+                    ? `code ${error.code}`
+                    : '알 수 없는 오류'
+                }`,
+              );
             }}
           />
 
@@ -90,6 +132,7 @@ export default function WeddingVideo() {
             onPointerUp={event => {
               event.preventDefault();
               event.stopPropagation();
+
               toggle();
             }}
             className={
@@ -115,6 +158,11 @@ export default function WeddingVideo() {
               </span>
             )}
           </button>
+
+          {/* 🔎 모바일 테스트용 상태 표시 */}
+          <div className="pointer-events-none absolute bottom-2 left-2 right-2 z-30 rounded-md bg-black/70 px-3 py-2 text-center text-xs text-white">
+            {debug}
+          </div>
 
         </div>
       </Reveal>
