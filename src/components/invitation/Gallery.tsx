@@ -9,15 +9,24 @@ import Lightbox from './Lightbox';
 
 const album = ALBUM_PHOTOS;
 
-/** 5p. 대표 사진 + 3×2 그리드(마지막 칸 "더보기"만 라이트박스 오픈). */
+/** 5p. 대표 사진 + 3×2 그리드(일반 칸은 개별 팝업, 마지막 칸 "더보기"는 앨범). */
 export default function Gallery() {
-  const [open, setOpen] = useState(false);
+  const [albumOpen, setAlbumOpen] = useState(false);
+  const [popupPhoto, setPopupPhoto] = useState<(typeof PHOTOS.grid)[number] | typeof PHOTOS.veil | null>(null);
 
   return (
     <Section aria-label="사진첩" className="min-h-0 justify-start gap-0 px-0 py-14">
       <div className="flex w-full flex-col items-center gap-10">
         <Reveal className="w-full max-w-[320px] px-5">
-          <Photo photo={PHOTOS.veil} sizes="320px" className="mt-12 w-full aspect-[6/4]" />
+          <button
+            type="button"
+            className="mt-12 block w-full touch-manipulation"
+            onClick={() => setPopupPhoto(PHOTOS.veil)}
+            aria-haspopup="dialog"
+            aria-label={`${PHOTOS.veil.alt} 크게 보기`}
+          >
+            <Photo photo={PHOTOS.veil} sizes="320px" className="w-full aspect-[6/4]" />
+          </button>
         </Reveal>
 
         <Reveal delay={120} className="w-full">
@@ -29,8 +38,8 @@ export default function Gallery() {
                   {isMore ? (
                     <button
                       type="button"
-                      className="relative block h-full w-full"
-                      onClick={() => setOpen(true)}
+                      className="relative block h-full w-full touch-manipulation"
+                      onClick={() => setAlbumOpen(true)}
                       aria-haspopup="dialog"
                       aria-label="사진 더보기, 슬라이드로 크게 보기"
                     >
@@ -40,9 +49,15 @@ export default function Gallery() {
                       </span>
                     </button>
                   ) : (
-                    <div className="relative h-full w-full">
+                    <button
+                      type="button"
+                      className="relative block h-full w-full touch-manipulation"
+                      onClick={() => setPopupPhoto(photo)}
+                      aria-haspopup="dialog"
+                      aria-label={`${photo.alt} 크게 보기`}
+                    >
                       <Photo photo={photo} sizes="30vw" className="h-full w-full" />
-                    </div>
+                    </button>
                   )}
                 </div>
               );
@@ -51,8 +66,17 @@ export default function Gallery() {
         </Reveal>
       </div>
 
-      {open && (
-        <Lightbox key="album" photos={album} initialIndex={0} onClose={() => setOpen(false)} />
+      {albumOpen && (
+        <Lightbox key="album" photos={album} initialIndex={0} onClose={() => setAlbumOpen(false)} />
+      )}
+
+      {popupPhoto && (
+        <Lightbox
+          key={`popup-${popupPhoto.src}`}
+          photos={[popupPhoto]}
+          initialIndex={0}
+          onClose={() => setPopupPhoto(null)}
+        />
       )}
     </Section>
   );

@@ -16,6 +16,7 @@ export default function Lightbox({ photos, initialIndex, onClose }: LightboxProp
   const [index, setIndex] = useState(initialIndex);
   const dialog = useRef<HTMLDialogElement>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const canNavigate = photos.length > 1;
   // 양 끝에서 멈춘다(순환 없음).
   const move = (direction: number) => setIndex(current => Math.min(Math.max(current + direction, 0), photos.length - 1));
 
@@ -39,6 +40,7 @@ export default function Lightbox({ photos, initialIndex, onClose }: LightboxProp
       onCancel={onClose}
       onClick={event => { if (event.target === event.currentTarget) onClose(); }}
       onKeyDown={event => {
+        if (!canNavigate) return;
         if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
         if (event.key === 'ArrowRight') { event.preventDefault(); move(1); }
       }}
@@ -52,10 +54,17 @@ export default function Lightbox({ photos, initialIndex, onClose }: LightboxProp
       </button>
 
       <div
-        className="absolute inset-x-0 top-[max(56px,env(safe-area-inset-top))] bottom-[max(84px,env(safe-area-inset-bottom))] overflow-hidden [touch-action:pan-y]"
-        onTouchStart={event => { touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }; }}
+        className={
+          canNavigate
+            ? 'absolute inset-x-0 top-[max(56px,env(safe-area-inset-top))] bottom-[max(84px,env(safe-area-inset-bottom))] overflow-hidden [touch-action:pan-y]'
+            : 'absolute inset-x-0 top-[max(56px,env(safe-area-inset-top))] bottom-[max(24px,env(safe-area-inset-bottom))] overflow-hidden'
+        }
+        onTouchStart={event => {
+          if (!canNavigate) return;
+          touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+        }}
         onTouchEnd={event => {
-          if (!touchStart.current || event.changedTouches.length === 0) return;
+          if (!canNavigate || !touchStart.current || event.changedTouches.length === 0) return;
           const dx = event.changedTouches[0].clientX - touchStart.current.x;
           const dy = event.changedTouches[0].clientY - touchStart.current.y;
           if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) move(dx < 0 ? 1 : -1);
@@ -82,25 +91,27 @@ export default function Lightbox({ photos, initialIndex, onClose }: LightboxProp
         </div>
       </div>
 
-      <div className="absolute inset-x-0 bottom-[max(20px,env(safe-area-inset-bottom))] flex items-center justify-center gap-7 font-sans text-sm text-neutral-500">
-        <button
-          className="h-12 w-12 text-2xl transition-opacity disabled:opacity-30"
-          onClick={() => move(-1)}
-          disabled={index === 0}
-          aria-label="이전 사진"
-        >
-          ←
-        </button>
-        <p aria-live="polite">{index + 1} / {photos.length}</p>
-        <button
-          className="h-12 w-12 text-2xl transition-opacity disabled:opacity-30"
-          onClick={() => move(1)}
-          disabled={index === photos.length - 1}
-          aria-label="다음 사진"
-        >
-          →
-        </button>
-      </div>
+      {canNavigate && (
+        <div className="absolute inset-x-0 bottom-[max(20px,env(safe-area-inset-bottom))] flex items-center justify-center gap-7 font-sans text-sm text-neutral-500">
+          <button
+            className="h-12 w-12 text-2xl transition-opacity disabled:opacity-30"
+            onClick={() => move(-1)}
+            disabled={index === 0}
+            aria-label="이전 사진"
+          >
+            ←
+          </button>
+          <p aria-live="polite">{index + 1} / {photos.length}</p>
+          <button
+            className="h-12 w-12 text-2xl transition-opacity disabled:opacity-30"
+            onClick={() => move(1)}
+            disabled={index === photos.length - 1}
+            aria-label="다음 사진"
+          >
+            →
+          </button>
+        </div>
+      )}
     </dialog>
   );
 }
