@@ -63,15 +63,8 @@ export const PHOTOS = {
   cover: photo(2, '서로를 바라보는 재훈과 지은'),
   selfie: { src: '/images/img6.jpg', alt: '초록 나무 앞에서 함께 셀카를 찍는 두 사람' },
   camera: { src: '/images/img7.jpg', alt: '베일을 펼친 지은을 사진에 담는 재훈' },
-  venue: { src: '/images/reference/venue-photo.png', alt: '나란히 누워 쉬고 있는 두 사람' },
   ceremony: photo(20, '데크 위에서 마주한 재훈과 지은'),
   portraits: [photo(4), photo(5), photo(16)],
-  triptych: [
-    { src: '/images/reference/triptych-1.webp', alt: '꽃다발을 들고 가까이 마주한 두 사람' },
-    { src: '/images/reference/triptych-2.webp', alt: '함께 브이 포즈를 하는 재훈과 지은' },
-    { src: '/images/02.jpg', alt: '다정하게 나란히 선 두 사람' },
-  ],
-  pajamas: { src: '/images/reference/pajamas.webp', alt: '잠옷을 입고 도넛을 즐기는 두 사람' },
   /** 앨범(Gallery) 대표 사진 — 라이트박스에서는 제외 */
   veil: photo(9, '재훈과 지은의 웨딩 사진', '20% 20%'),
   /** 마지막 칸은 더보기 썸네일(31) — 앨범에도 포함(아래 ALBUM_INCLUDE) */

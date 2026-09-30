@@ -5,7 +5,7 @@ import { assetPath } from '@/lib/asset';
 import Section from './Section';
 import Reveal from './Reveal';
 
-const SRC = assetPath('/images/wedding.MOV');
+const SRC = assetPath('/images/wedding.mov');
 const POSTER = assetPath('/images/wedding-poster.jpg');
 
 /** INFORMATION ↔ WEDDING DAY. 타이틀 없이 영상만, 재생 버튼으로 재생. */
