@@ -5,91 +5,89 @@ import { useEffect } from 'react';
 const VIEWPORT_LOCKED =
   'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
 
-let isResetting = false;
-
 function lockViewport() {
-  document.querySelector('meta[name="viewport"]')?.setAttribute('content', VIEWPORT_LOCKED);
-}
-
-function currentScale() {
-  return window.visualViewport?.scale ?? 1;
-}
-
-function isClearlyZoomed() {
-  return currentScale() > 1.05;
-}
-
-/** 확대 고착 복구 — 스크롤 위치 유지, CSS zoom 미사용 */
-function resetViewportScale() {
-  if (isResetting || !isClearlyZoomed()) return;
   const meta = document.querySelector('meta[name="viewport"]');
-  if (!meta) return;
 
-  isResetting = true;
-  const scrollY = window.scrollY || window.pageYOffset || 0;
-
-  meta.setAttribute(
-    'content',
-    'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover',
-  );
-
-  window.setTimeout(() => {
-    meta.setAttribute(
-      'content',
-      'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=yes, viewport-fit=cover',
-    );
-    window.setTimeout(() => {
-      lockViewport();
-      window.scrollTo(0, scrollY);
-      isResetting = false;
-    }, 80);
-  }, 80);
+  if (meta) {
+    meta.setAttribute('content', VIEWPORT_LOCKED);
+  }
 }
 
-/**
- * - 두 손가락 핀치(한 손 고정 + 한 손 확대 포함) 차단
- * - iOS 더블탭·더블탭-드래그 줌 차단
- * - 한 손가락 일반 스크롤은 preventDefault 하지 않음
- */
 export default function DisableZoom() {
   useEffect(() => {
+    // --------------------------------------------------
+    // 1. viewport 확대 방지
+    // --------------------------------------------------
     lockViewport();
 
+    // --------------------------------------------------
+    // 상태
+    // --------------------------------------------------
     let lastTapAt = 0;
     let lastTapX = 0;
     let lastTapY = 0;
-    /** 더블탭 두 번째 터치가 유지·드래그 중이면 true (한 손가락 줌) */
+
+    // 더블탭 후 한 손가락 드래그 확대 방지
     let blockOneFingerZoom = false;
+
+    // 현재 터치 중인 손가락 수
     let activeTouches = 0;
 
+    // --------------------------------------------------
+    // 공통 preventDefault
+    // --------------------------------------------------
     const prevent = (event: Event) => {
       event.preventDefault();
     };
 
+    // --------------------------------------------------
+    // 2. 터치 시작
+    // --------------------------------------------------
     const onTouchStart = (event: TouchEvent) => {
       activeTouches = event.touches.length;
 
-      // 한 손가락 고정 + 다른 손가락 확대 = touches >= 2
+      // ----------------------------------------------
+      // 두 손가락 이상
+      // ----------------------------------------------
+      // 한 손가락을 화면에 고정하고
+      // 다른 손가락으로 벌리는 핀치 줌까지 차단
       if (event.touches.length > 1) {
         event.preventDefault();
+
         blockOneFingerZoom = false;
-        if (isClearlyZoomed()) resetViewportScale();
+
         return;
       }
 
+      // ----------------------------------------------
+      // 한 손가락
+      // ----------------------------------------------
       const touch = event.touches[0];
-      if (!touch) return;
+
+      if (!touch) {
+        return;
+      }
 
       const now = Date.now();
-      const dt = now - lastTapAt;
-      const dx = Math.abs(touch.clientX - lastTapX);
-      const dy = Math.abs(touch.clientY - lastTapY);
 
-      // 더블탭(또는 더블탭 후 드래그 줌) 시작 — 두 번째 탭에서 차단
-      if (dt > 0 && dt < 320 && dx < 36 && dy < 36) {
+      const timeSinceLastTap = now - lastTapAt;
+
+      const distanceX = Math.abs(touch.clientX - lastTapX);
+      const distanceY = Math.abs(touch.clientY - lastTapY);
+
+      // ----------------------------------------------
+      // 더블탭 확대 방지
+      // ----------------------------------------------
+      if (
+        timeSinceLastTap > 0 &&
+        timeSinceLastTap < 320 &&
+        distanceX < 36 &&
+        distanceY < 36
+      ) {
         event.preventDefault();
+
+        // 두 번째 탭 이후의 드래그도 차단
         blockOneFingerZoom = true;
-        if (isClearlyZoomed()) resetViewportScale();
       } else {
         blockOneFingerZoom = false;
       }
@@ -99,98 +97,322 @@ export default function DisableZoom() {
       lastTapY = touch.clientY;
     };
 
+    // --------------------------------------------------
+    // 3. 터치 이동
+    // --------------------------------------------------
     const onTouchMove = (event: TouchEvent) => {
       activeTouches = event.touches.length;
 
+      // ----------------------------------------------
+      // 멀티터치
+      // ----------------------------------------------
       if (event.touches.length > 1) {
         event.preventDefault();
-        if (isClearlyZoomed()) resetViewportScale();
         return;
       }
 
-      // 더블탭-드래그 줌: 손가락 하나지만 확대를 시도하는 경우
+      // ----------------------------------------------
+      // 더블탭 후 드래그 확대 방지
+      // ----------------------------------------------
       if (blockOneFingerZoom) {
         event.preventDefault();
-        if (isClearlyZoomed()) resetViewportScale();
+        return;
       }
+
+      // 중요:
+      // 일반적인 한 손가락 터치는 preventDefault 하지 않는다.
+      //
+      // 따라서
+      // 위로 스크롤
+      // 아래로 스크롤
+      //
+      // 은 정상적으로 작동한다.
     };
 
+    // --------------------------------------------------
+    // 4. 터치 종료
+    // --------------------------------------------------
     const onTouchEnd = (event: TouchEvent) => {
       activeTouches = event.touches.length;
 
       if (event.touches.length === 0) {
         blockOneFingerZoom = false;
       }
+    };
 
-      // 멀티터치가 끝나며 확대가 남았을 때 복구
-      if (isClearlyZoomed()) {
-        resetViewportScale();
+    // --------------------------------------------------
+    // 5. 터치 취소
+    // --------------------------------------------------
+    const onTouchCancel = () => {
+      activeTouches = 0;
+      blockOneFingerZoom = false;
+    };
+
+    // --------------------------------------------------
+    // 6. iOS Safari gesture 확대 방지
+    // --------------------------------------------------
+    const onGestureStart = (event: Event) => {
+      event.preventDefault();
+    };
+
+    const onGestureChange = (event: Event) => {
+      event.preventDefault();
+    };
+
+    const onGestureEnd = (event: Event) => {
+      event.preventDefault();
+    };
+
+    // --------------------------------------------------
+    // 7. 더블클릭 확대 방지
+    // --------------------------------------------------
+    const onDoubleClick = (event: MouseEvent) => {
+      event.preventDefault();
+    };
+
+    // --------------------------------------------------
+    // 8. Ctrl/Cmd + 휠 확대 방지
+    // --------------------------------------------------
+    const onWheel = (event: WheelEvent) => {
+      if (event.ctrlKey || event.metaKey) {
+        event.preventDefault();
       }
     };
 
-    const onWheel = (event: WheelEvent) => {
-      if (event.ctrlKey || event.metaKey) event.preventDefault();
-    };
-
+    // --------------------------------------------------
+    // 9. Ctrl/Cmd + / - / 0 확대/축소 방지
+    // --------------------------------------------------
     const onKeyDown = (event: KeyboardEvent) => {
-      if (!(event.ctrlKey || event.metaKey)) return;
+      if (!(event.ctrlKey || event.metaKey)) {
+        return;
+      }
+
       const key = event.key.toLowerCase();
+
+      const zoomKeys = [
+        '+',
+        '-',
+        '=',
+        '_',
+        '0',
+      ];
+
+      const zoomCodes = [
+        'Equal',
+        'Minus',
+        'Digit0',
+        'NumpadAdd',
+        'NumpadSubtract',
+        'Numpad0',
+      ];
+
       if (
-        ['+', '-', '=', '_', '0'].includes(key) ||
-        event.code === 'Equal' ||
-        event.code === 'Minus' ||
-        event.code === 'Digit0' ||
-        event.code === 'NumpadAdd' ||
-        event.code === 'NumpadSubtract' ||
-        event.code === 'Numpad0'
+        zoomKeys.includes(key) ||
+        zoomCodes.includes(event.code)
       ) {
         event.preventDefault();
       }
     };
 
+    // --------------------------------------------------
+    // 10. visualViewport 확대 감지
+    // --------------------------------------------------
+    //
+    // 일부 브라우저에서는 viewport meta만으로
+    // 확대를 완전히 막지 못할 수 있다.
+    //
+    // 확대 상태가 감지되면 viewport를 다시 잠근다.
+    //
     const recoverIfZoomed = () => {
-      if (isClearlyZoomed()) resetViewportScale();
+      const scale = window.visualViewport?.scale ?? 1;
+
+      if (scale > 1.05) {
+        lockViewport();
+      }
     };
 
-    // 터치 중 scale이 변하면 즉시 복구 (한손+한손 / 더블탭 드래그 모두 대응)
+    // --------------------------------------------------
+    // 11. visualViewport 변화 감지
+    // --------------------------------------------------
     const onViewportResize = () => {
-      if (activeTouches > 0 || isClearlyZoomed()) recoverIfZoomed();
+      if (activeTouches > 0) {
+        recoverIfZoomed();
+        return;
+      }
+
+      recoverIfZoomed();
     };
 
-    const opts: AddEventListenerOptions = { passive: false };
-    const optsCapture: AddEventListenerOptions = { passive: false, capture: true };
+    // --------------------------------------------------
+    // 이벤트 옵션
+    // --------------------------------------------------
+    const captureOptions: AddEventListenerOptions = {
+      passive: false,
+      capture: true,
+    };
 
-    document.addEventListener('touchstart', onTouchStart, optsCapture);
-    document.addEventListener('touchmove', onTouchMove, optsCapture);
-    document.addEventListener('touchend', onTouchEnd, optsCapture);
-    document.addEventListener('touchcancel', onTouchEnd, optsCapture);
-    document.addEventListener('gesturestart', prevent, optsCapture);
-    document.addEventListener('gesturechange', prevent, optsCapture);
-    document.addEventListener('gestureend', prevent, optsCapture);
-    document.addEventListener('dblclick', prevent, opts);
-    document.addEventListener('wheel', onWheel, opts);
-    document.addEventListener('keydown', onKeyDown, opts);
+    const normalOptions: AddEventListenerOptions = {
+      passive: false,
+    };
+
+    // --------------------------------------------------
+    // 이벤트 등록
+    // --------------------------------------------------
+    document.addEventListener(
+      'touchstart',
+      onTouchStart,
+      captureOptions,
+    );
+
+    document.addEventListener(
+      'touchmove',
+      onTouchMove,
+      captureOptions,
+    );
+
+    document.addEventListener(
+      'touchend',
+      onTouchEnd,
+      captureOptions,
+    );
+
+    document.addEventListener(
+      'touchcancel',
+      onTouchCancel,
+      captureOptions,
+    );
+
+    document.addEventListener(
+      'gesturestart',
+      onGestureStart,
+      captureOptions,
+    );
+
+    document.addEventListener(
+      'gesturechange',
+      onGestureChange,
+      captureOptions,
+    );
+
+    document.addEventListener(
+      'gestureend',
+      onGestureEnd,
+      captureOptions,
+    );
+
+    document.addEventListener(
+      'dblclick',
+      onDoubleClick,
+      normalOptions,
+    );
+
+    document.addEventListener(
+      'wheel',
+      onWheel,
+      normalOptions,
+    );
+
+    document.addEventListener(
+      'keydown',
+      onKeyDown,
+      normalOptions,
+    );
 
     const viewport = window.visualViewport;
-    viewport?.addEventListener('resize', onViewportResize);
-    window.addEventListener('pageshow', recoverIfZoomed);
 
-    const timer = window.setInterval(recoverIfZoomed, 800);
+    viewport?.addEventListener(
+      'resize',
+      onViewportResize,
+    );
 
+    window.addEventListener(
+      'pageshow',
+      recoverIfZoomed,
+    );
+
+    // --------------------------------------------------
+    // 혹시 브라우저가 확대를 허용했을 경우
+    // 주기적으로 viewport 다시 잠금
+    // --------------------------------------------------
+    const timer = window.setInterval(
+      recoverIfZoomed,
+      500,
+    );
+
+    // --------------------------------------------------
+    // Cleanup
+    // --------------------------------------------------
     return () => {
-      document.removeEventListener('touchstart', onTouchStart, true);
-      document.removeEventListener('touchmove', onTouchMove, true);
-      document.removeEventListener('touchend', onTouchEnd, true);
-      document.removeEventListener('touchcancel', onTouchEnd, true);
-      document.removeEventListener('gesturestart', prevent, true);
-      document.removeEventListener('gesturechange', prevent, true);
-      document.removeEventListener('gestureend', prevent, true);
-      document.removeEventListener('dblclick', prevent);
-      document.removeEventListener('wheel', onWheel);
-      document.removeEventListener('keydown', onKeyDown);
-      viewport?.removeEventListener('resize', onViewportResize);
-      window.removeEventListener('pageshow', recoverIfZoomed);
+      document.removeEventListener(
+        'touchstart',
+        onTouchStart,
+        true,
+      );
+
+      document.removeEventListener(
+        'touchmove',
+        onTouchMove,
+        true,
+      );
+
+      document.removeEventListener(
+        'touchend',
+        onTouchEnd,
+        true,
+      );
+
+      document.removeEventListener(
+        'touchcancel',
+        onTouchCancel,
+        true,
+      );
+
+      document.removeEventListener(
+        'gesturestart',
+        onGestureStart,
+        true,
+      );
+
+      document.removeEventListener(
+        'gesturechange',
+        onGestureChange,
+        true,
+      );
+
+      document.removeEventListener(
+        'gestureend',
+        onGestureEnd,
+        true,
+      );
+
+      document.removeEventListener(
+        'dblclick',
+        onDoubleClick,
+      );
+
+      document.removeEventListener(
+        'wheel',
+        onWheel,
+      );
+
+      document.removeEventListener(
+        'keydown',
+        onKeyDown,
+      );
+
+      viewport?.removeEventListener(
+        'resize',
+        onViewportResize,
+      );
+
+      window.removeEventListener(
+        'pageshow',
+        recoverIfZoomed,
+      );
+
       window.clearInterval(timer);
+
+      // 컴포넌트가 사라져도 viewport 잠금 유지
       lockViewport();
     };
   }, []);

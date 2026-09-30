@@ -10,23 +10,32 @@
 
 @layer base {
   :root { color-scheme: light; }
-  html {
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    /* manipulation: 더블탭 확대 차단 + 스크롤/탭 허용 */
-    touch-action: manipulation;
-  }
-  body {
-    margin: 0;
-    background: #ffffff;
-    color: #111111;
-    font-family: var(--font-myeongjo), 'AppleMyungjo', 'Batang', serif;
-    touch-action: manipulation;
-    overscroll-behavior-y: none;
-    -webkit-overflow-scrolling: touch;
-  }
+ html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+
+  /* 세로 스크롤만 허용 */
+  touch-action: pan-y;
+
+  
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #111111;
+  font-family: var(--font-myeongjo), 'AppleMyungjo', 'Batang', serif;
+
+  /* 세로 스크롤만 허용 */
+  touch-action: pan-y;
+
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+}
+
   img, video, button, a, input, textarea {
-    touch-action: manipulation;
+    touch-action: pan-y;
+
   }
   img, video {
     -webkit-user-drag: none;
