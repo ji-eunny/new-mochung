@@ -32,6 +32,11 @@ export default function Accounts() {
   return (
     <Section aria-labelledby="accounts-heading" className="gap-7">
       <Reveal><p className="text-gray-400"><span>*</span> ACCOUNT <span>*</span></p></Reveal>
+      <Reveal className="mt-2 text-center text-[14px] leading-[2] text-neutral-600">
+        <p>참석이 어려우신 분들을 위해</p>
+        <p>계좌번호를 기재하였습니다.</p>
+        <p>너그러운 마음으로 양해 부탁드립니다.</p>
+      </Reveal>
       <Reveal delay={120} className="mt-4 w-[70%] max-w-[300px]">
         <Photo photo={PHOTOS.accounts} sizes="70vw" className="aspect-[6/4] w-full [-webkit-mask-image:linear-gradient(to_right,transparent_0%,#000_28%,#000_72%,transparent_100%)] [mask-image:linear-gradient(to_right,transparent_0%,#000_28%,#000_72%,transparent_100%)]" />
       </Reveal>
