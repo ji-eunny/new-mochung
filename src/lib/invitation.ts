@@ -41,9 +41,9 @@ export const NOTICES = [
 export type Account = { role: string; name: string; bank: string; number: string };
 export const ACCOUNTS: Record<'groom' | 'bride', Account[]> = {
   groom: [
-    { role: '신랑', name: '장재훈', bank: '카카오뱅크', number: '1234-1234-1234' },
-    { role: '아버지', name: '장석균', bank: '카카오뱅크', number: '1234-1234-1234' },
-    { role: '어머니', name: '유상아', bank: '카카오뱅크', number: '1234-1234-1234' },
+    { role: '신랑', name: '장재훈', bank: '국민은행', number: '002801-04-187128' },
+    { role: '아버지', name: '장석균', bank: '신한은행', number: '950-04-035082' },
+    { role: '어머니', name: '유상아', bank: '농협은행', number: '354-12-063947' },
   ],
   bride: [
     { role: '신부', name: '김지은', bank: '카카오뱅크', number: '3333-16-5452792' },
