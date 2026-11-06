@@ -78,19 +78,19 @@ export default function BgmToggle() {
         onClick={toggle}
         aria-label={playing ? '배경음악 끄기' : '배경음악 켜기'}
         aria-pressed={playing}
-        className="fixed right-4 top-4 z-50 grid h-10 w-10 place-items-center rounded-full bg-white/70 text-neutral-700 shadow-sm backdrop-blur transition-colors hover:bg-white/90"
+        className="fixed right-3.5 top-[max(12px,env(safe-area-inset-top))] z-50 grid h-9 w-9 place-items-center rounded-full bg-white/50 text-neutral-600 ring-1 ring-black/5 backdrop-blur-md transition active:scale-95 active:bg-white/70"
       >
         {playing ? (
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none" />
-            <path d="M16 8.5a4 4 0 0 1 0 7" />
-            <path d="M18.6 6a7 7 0 0 1 0 12" />
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M4 10v4h3.2L12 18.2V5.8L7.2 10H4z" />
+            <path d="M15.5 9.2a3.2 3.2 0 0 1 0 5.6" />
+            <path d="M17.6 7a6 6 0 0 1 0 10" />
           </svg>
         ) : (
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" stroke="none" />
-            <line x1="16" y1="9.5" x2="21" y2="14.5" />
-            <line x1="21" y1="9.5" x2="16" y2="14.5" />
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M4 10v4h3.2L12 18.2V5.8L7.2 10H4z" />
+            <path d="M16.2 10.2l4.2 4.2" />
+            <path d="M20.4 10.2l-4.2 4.2" />
           </svg>
         )}
       </button>

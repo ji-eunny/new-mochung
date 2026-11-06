@@ -2,6 +2,7 @@ import { WEDDING } from '@/lib/invitation';
 import { cn } from '@/lib/utils';
 import Section from './Section';
 import Reveal from './Reveal';
+import SoftBreak from './SoftBreak';
 
 const WEEK = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -26,13 +27,13 @@ export default function WeddingDay() {
         <p className="text-gray-400 text-[18px]"><span>*</span> WEDDING DAY <span>*</span></p>
       </Reveal>
 
-      <Reveal delay={120} className="text-center">
+      <Reveal delay={120} className="w-full min-w-0 text-center">
         <p className="font-['Times_New_Roman',Times,serif] text-[40px] leading-none tracking-tight text-neutral-800">
           {String(month).padStart(2, '0')}
           <span className="mx-1 align-middle text-[24px] text-neutral-400">.</span>
           {String(day).padStart(2, '0')}
         </p>
-        <p className="mt-4 text-[16px] tracking-wide text-neutral-500">{WEDDING.dateLabel}</p>
+        <SoftBreak text={WEDDING.dateLabel} className="mt-4 text-[16px] tracking-wide text-neutral-500" />
       </Reveal>
 
       <Reveal delay={200} className="w-full max-w-[320px]">

@@ -3,9 +3,9 @@ import { ALBUM_FILES } from './album.generated';
 
 export const WEDDING = {
   date: '2027-02-13T10:50:00+09:00',
-  dateLabel: '2027년 2월 13일 토요일 오전 10시 50분',
+  dateLabel: '2027년 2월 13일 토요일\n오전 10시 50분',
   venue: '까사그랑데 센트로',
-  address: '서울 광진구 능동로 87 건대입구역 자이엘라 6층',
+  address: '서울 광진구 능동로 87\n건대입구역 자이엘라 6층',
   mapQuery: '까사그랑데 센트로 서울 광진구 능동로 87',
   /** LOCATION 섹션 지도·오시는 길 */
   coordinates: { lat: 37.5414, lng: 127.0699 },

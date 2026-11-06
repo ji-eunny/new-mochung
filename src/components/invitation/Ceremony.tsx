@@ -3,6 +3,7 @@ import { assetPath } from '@/lib/asset';
 import Photo from './Photo';
 import Section from './Section';
 import Reveal from './Reveal';
+import SoftBreak from './SoftBreak';
 
 /** 3p. 혼주 소개 + 예식 사진 + 일시/장소. */
 export default function Ceremony() {
@@ -30,10 +31,10 @@ export default function Ceremony() {
         </div>
       </Reveal>
 
-      <Reveal delay={120} className="leading-[1.7]">
-        <p className="text-[16px] font-bold tracking-tight">{WEDDING.dateLabel}</p>
+      <Reveal delay={120} className="w-full min-w-0 leading-[1.7]">
+        <SoftBreak text={WEDDING.dateLabel} className="text-[16px] font-bold tracking-tight" />
         <p className="mt-3 text-[16px]">{WEDDING.venue}</p>
-        <p className="mt-3 text-[14px] text-neutral-600">{WEDDING.address}</p>
+        <SoftBreak text={WEDDING.address} className="mt-3 text-[14px] text-neutral-600" />
       </Reveal>
     </Section>
   );

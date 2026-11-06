@@ -33,9 +33,9 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+  /* manipulation은 핀치 확대를 허용한다. 사진·버튼 위에서도 세로 스크롤만 연다. */
   img, video, button, a, input, textarea {
-    touch-action: manipulation;
-
+    touch-action: pan-y;
   }
   img, video {
     -webkit-user-drag: none;

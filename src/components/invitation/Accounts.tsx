@@ -32,7 +32,7 @@ export default function Accounts() {
   return (
     <Section aria-labelledby="accounts-heading" className="gap-7">
       <Reveal><p className="text-gray-400"><span>*</span> ACCOUNT <span>*</span></p></Reveal>
-      <Reveal className="mt-2 text-center text-[14px] leading-[2] text-neutral-600">
+      <Reveal className="mt-2 text-center text-[16px] leading-[2] text-neutral-600">
         <p>참석이 어려우신 분들을 위해</p>
         <p>계좌번호를 기재하였습니다.</p>
         <p>너그러운 마음으로 양해 부탁드립니다.</p>
@@ -53,7 +53,7 @@ export default function Accounts() {
                   aria-controls={`account-panel-${value}`}
                   id={`account-tab-${value}`}
                   onClick={() => toggle(value)}
-                  className="flex min-h-11 w-full items-center justify-center gap-2 text-[13px] tracking-[0.2em] text-neutral-800"
+                  className="flex min-h-11 w-full items-center justify-center gap-2 text-[14px] tracking-[0.2em] text-neutral-800"
                 >
                   <span>{label}</span>
                   <span
@@ -84,19 +84,19 @@ export default function Accounts() {
                           className="flex items-center justify-between gap-3 px-1 py-3"
                         >
                           <div className="min-w-0 text-left">
-                            <p className="text-[13px] text-neutral-700">
+                            <p className="text-[14px] text-neutral-700">
                               {account.role} · {account.name}
                             </p>
-                            <p className="mt-1 text-[12px] tracking-wide text-neutral-500">
+                            <p className="mt-1 text-[14px] tracking-wide text-neutral-500">
                               {account.bank}
                             </p>
-                            <p className="mt-0.5 select-text text-[13px] tracking-tight text-neutral-600">
+                            <p className="mt-0.5 select-text text-[14px] tracking-tight text-neutral-600">
                               {account.number}
                             </p>
                           </div>
                           <button
                             type="button"
-                            className="min-h-9 shrink-0 px-2 text-[12px] tracking-wide text-neutral-500"
+                            className="min-h-9 shrink-0 px-2 text-[14px] tracking-wide text-neutral-500"
                             aria-label={`${account.name} 계좌번호 복사`}
                             onClick={() => copy(account.name, account.number)}
                           >

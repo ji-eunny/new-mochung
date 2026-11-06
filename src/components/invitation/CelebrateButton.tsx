@@ -66,9 +66,9 @@ export default function CelebrateButton() {
         type="button"
         onClick={celebrate}
         aria-label="축하 이모지 터뜨리기"
-        className="fixed right-16 top-4 z-50 grid h-10 w-10 place-items-center rounded-full bg-white/70 text-neutral-700 shadow-sm backdrop-blur transition-colors hover:bg-white/90"
+        className="fixed right-[58px] top-[max(12px,env(safe-area-inset-top))] z-50 grid h-9 w-9 place-items-center rounded-full bg-white/50 text-neutral-600 ring-1 ring-black/5 backdrop-blur-md transition active:scale-95 active:bg-white/70"
       >
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M12 21C12 21 4 13.8 4 8.6C4 5.6 6.4 4 8.8 5.4C10.2 6.2 12 8 12 8C12 8 13.8 6.2 15.2 5.4C17.6 4 20 5.6 20 8.6C20 13.8 12 21 12 21Z" />
         </svg>
       </button>

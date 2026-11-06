@@ -18,7 +18,7 @@ export default function Closing() {
           alt={PHOTOS.closing.alt}
         />
       </Reveal>
-      <Reveal delay={120} className="text-left text-[14px] leading-[2] mt-24 w-full pl-6">
+      <Reveal delay={120} className="text-left text-[16px] leading-[2] mt-24 w-full pl-6">
         <p className="text-neutral-600">소중한 날 함께해 주셔서 감사합니다.</p>
         <p className="mt-4 text-neutral-600">재훈, 지은 드림</p>
       </Reveal>

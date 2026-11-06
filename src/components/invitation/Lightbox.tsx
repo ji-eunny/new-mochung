@@ -13,12 +13,79 @@ type LightboxProps = {
 
 /** 사진을 팝업(dialog)으로 크게 띄우고 좌우로 넘겨 보는 슬라이드 뷰어. */
 export default function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
+  const count = photos.length;
+  const canNavigate = count > 1;
   const [index, setIndex] = useState(initialIndex);
+  const [displayIndex, setDisplayIndex] = useState(initialIndex);
+  /** 0이면 가운데 장. 1이면 다음 장으로, -1이면 이전 장으로 한 칸 이동 중. */
+  const [shift, setShift] = useState(0);
+  const [animate, setAnimate] = useState(false);
+  const [dragX, setDragX] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const shiftRef = useRef(0);
   const dialog = useRef<HTMLDialogElement>(null);
-  const touchStart = useRef<{ x: number; y: number } | null>(null);
-  const canNavigate = photos.length > 1;
-  // 양 끝에서 멈춘다(순환 없음).
-  const move = (direction: number) => setIndex(current => Math.min(Math.max(current + direction, 0), photos.length - 1));
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    dx: number;
+  } | null>(null);
+
+  const settle = () => {
+    const direction = shiftRef.current;
+    if (direction === 0) return;
+    shiftRef.current = 0;
+    setAnimate(false);
+    setShift(0);
+    setIndex(current => (current + direction + count) % count);
+  };
+
+  const move = (direction: 1 | -1) => {
+    if (!canNavigate || shiftRef.current !== 0) return;
+    shiftRef.current = direction;
+    setDragging(false);
+    setDragX(0);
+    setAnimate(true);
+    setShift(direction);
+    setDisplayIndex(current => (current + direction + count) % count);
+  };
+
+  const releaseDrag = (pointerId: number) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== pointerId) return;
+    dragRef.current = null;
+    setDragging(false);
+
+    const width = viewportRef.current?.clientWidth ?? window.innerWidth;
+    const threshold = Math.min(72, width * 0.16);
+    const direction: 1 | -1 | 0 = drag.dx <= -threshold ? 1 : drag.dx >= threshold ? -1 : 0;
+
+    setAnimate(true);
+    requestAnimationFrame(() => {
+      setDragX(0);
+      if (direction === 0) return;
+      shiftRef.current = direction;
+      setShift(direction);
+      setDisplayIndex(current => (current + direction + count) % count);
+    });
+  };
+
+  const settleRef = useRef(settle);
+  settleRef.current = settle;
+
+  useEffect(() => {
+    if (shift === 0) return;
+    const timer = window.setTimeout(() => settleRef.current(), 340);
+    return () => window.clearTimeout(timer);
+  }, [shift]);
+
+  const slides = canNavigate
+    ? [
+        { key: 'prev', photo: photos[(index - 1 + count) % count] },
+        { key: 'current', photo: photos[index] },
+        { key: 'next', photo: photos[(index + 1) % count] },
+      ]
+    : [{ key: 'single', photo: photos[index] }];
 
   useEffect(() => {
     const element = dialog.current;
@@ -54,37 +121,48 @@ export default function Lightbox({ photos, initialIndex, onClose }: LightboxProp
       </button>
 
       <div
+        ref={viewportRef}
         className={
           canNavigate
-            ? 'absolute inset-x-0 top-[max(56px,env(safe-area-inset-top))] bottom-[max(84px,env(safe-area-inset-bottom))] overflow-hidden [touch-action:pan-y]'
+            ? `absolute inset-x-0 top-[max(56px,env(safe-area-inset-top))] bottom-[max(84px,env(safe-area-inset-bottom))] overflow-hidden touch-none select-none ${dragging ? 'cursor-grabbing' : 'cursor-grab'}`
             : 'absolute inset-x-0 top-[max(56px,env(safe-area-inset-top))] bottom-[max(24px,env(safe-area-inset-bottom))] overflow-hidden'
         }
-        onTouchStart={event => {
-          if (!canNavigate) return;
-          touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+        onPointerDown={event => {
+          if (!canNavigate || shiftRef.current !== 0 || event.button !== 0) return;
+          dragRef.current = { pointerId: event.pointerId, startX: event.clientX, dx: 0 };
+          setDragging(true);
+          setAnimate(false);
+          event.currentTarget.setPointerCapture(event.pointerId);
         }}
-        onTouchEnd={event => {
-          if (!canNavigate || !touchStart.current || event.changedTouches.length === 0) return;
-          const dx = event.changedTouches[0].clientX - touchStart.current.x;
-          const dy = event.changedTouches[0].clientY - touchStart.current.y;
-          if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) move(dx < 0 ? 1 : -1);
-          touchStart.current = null;
+        onPointerMove={event => {
+          const drag = dragRef.current;
+          if (!drag || drag.pointerId !== event.pointerId) return;
+          const width = viewportRef.current?.clientWidth ?? window.innerWidth;
+          const dx = Math.max(-width, Math.min(width, event.clientX - drag.startX));
+          drag.dx = dx;
+          setDragX(dx);
         }}
+        onPointerUp={event => releaseDrag(event.pointerId)}
+        onPointerCancel={event => releaseDrag(event.pointerId)}
       >
-        {/* 모든 슬라이드를 가로로 이어붙인 트랙을 translateX로 이동 → 부드러운 슬라이드 */}
+        {/* 이전·현재·다음 세 장만 두고 한 칸씩 이동. 끄는 동안에는 손가락을 따라간다. */}
         <div
-          className="flex h-full w-full transition-transform duration-300 ease-out will-change-transform"
-          style={{ transform: `translateX(-${index * 100}%)` }}
+          className={`flex h-full w-full will-change-transform ${animate ? 'transition-transform duration-300 ease-out' : ''}`}
+          style={{ transform: canNavigate ? `translateX(calc(-${(1 + shift) * 100}% + ${dragX}px))` : 'translateX(0)' }}
+          onTransitionEnd={event => {
+            if (event.target !== event.currentTarget || event.propertyName !== 'transform') return;
+            settle();
+          }}
         >
-          {photos.map((photo, i) => (
-            <div key={photo.src} className="relative h-full w-full shrink-0 grow-0 basis-full">
+          {slides.map(({ key, photo }) => (
+            <div key={count > 2 ? photo.src : key} className="relative h-full w-full shrink-0 grow-0 basis-full">
               <Image
                 src={assetPath(photo.src)}
                 alt={photo.alt}
                 fill
                 sizes="100vw"
-                loading={Math.abs(i - index) <= 1 ? 'eager' : 'lazy'}
-                className="object-contain"
+                draggable={false}
+                className="pointer-events-none object-contain"
               />
             </div>
           ))}
@@ -94,18 +172,16 @@ export default function Lightbox({ photos, initialIndex, onClose }: LightboxProp
       {canNavigate && (
         <div className="absolute inset-x-0 bottom-[max(20px,env(safe-area-inset-bottom))] flex items-center justify-center gap-7 font-sans text-sm text-neutral-500">
           <button
-            className="h-12 w-12 text-2xl transition-opacity disabled:opacity-30"
+            className="h-12 w-12 text-2xl"
             onClick={() => move(-1)}
-            disabled={index === 0}
             aria-label="이전 사진"
           >
             ←
           </button>
-          <p aria-live="polite">{index + 1} / {photos.length}</p>
+          <p aria-live="polite">{displayIndex + 1} / {photos.length}</p>
           <button
-            className="h-12 w-12 text-2xl transition-opacity disabled:opacity-30"
+            className="h-12 w-12 text-2xl"
             onClick={() => move(1)}
-            disabled={index === photos.length - 1}
             aria-label="다음 사진"
           >
             →

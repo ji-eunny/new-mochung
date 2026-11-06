@@ -1,6 +1,7 @@
 import { WEDDING } from '@/lib/invitation';
 import Section from './Section';
 import Reveal from './Reveal';
+import SoftBreak from './SoftBreak';
 
 const mapLink = 'inline-flex min-h-11 items-center rounded-full border border-neutral-300 px-6 py-2 text-[14px]';
 
@@ -14,10 +15,10 @@ export default function Location() {
         <p className="text-gray-400 text-[18px]"><span>*</span> LOCATION <span>*</span></p>
       </Reveal>
 
-      <Reveal delay={120} className="w-full py-4">
-        <div className="mx-auto w-full max-w-[320px] text-center">
+      <Reveal delay={120} className="w-full min-w-0 py-4">
+        <div className="mx-auto w-full min-w-0 max-w-[320px] text-center">
           <p className="text-[20px] tracking-wide text-neutral-800">{WEDDING.venue}</p>
-          <p className="mt-4 text-[15px] leading-[1.9] text-neutral-600">{WEDDING.address}</p>
+          <SoftBreak text={WEDDING.address} className="mt-4 text-[15px] leading-[1.9] text-neutral-600" />
           <p className="mt-5 text-[14px] tracking-wide text-neutral-500">{WEDDING.directions}</p>
         </div>
       </Reveal>

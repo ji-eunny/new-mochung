@@ -5,24 +5,60 @@ import { useEffect } from 'react';
 const VIEWPORT_LOCKED =
   'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
 
-function lockViewport() {
-  const meta = document.querySelector('meta[name="viewport"]');
+/** maximum-scale=1인 채로 이미 확대되면 iOS는 축소와 새로고침 복귀를 막는다. 잠깐 상한을 푼 뒤 다시 잠근다. */
+const VIEWPORT_OPEN =
+  'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover';
 
-  if (meta) {
-    meta.setAttribute('content', VIEWPORT_LOCKED);
-  }
+function replaceViewport(content: string) {
+  document.querySelectorAll('meta[name="viewport"]').forEach(node => node.remove());
+  const meta = document.createElement('meta');
+  meta.name = 'viewport';
+  meta.content = content;
+  document.head.appendChild(meta);
 }
 
-function isZoomed() {
-  return (window.visualViewport?.scale ?? 1) > 1.05;
+function viewportScale() {
+  return window.visualViewport?.scale ?? 1;
 }
 
 export default function DisableZoom() {
   useEffect(() => {
     // --------------------------------------------------
-    // viewport 확대 잠금
+    // viewport 확대 잠금. 같은 문자열을 다시 넣으면 iOS가 무시하므로 노드를 교체한다.
     // --------------------------------------------------
-    lockViewport();
+    let appliedZoom = '';
+
+    const recoverIfZoomed = () => {
+      const scale = viewportScale();
+
+      if (scale <= 1.02) {
+        if (appliedZoom) {
+          appliedZoom = '';
+          document.documentElement.style.zoom = '';
+        }
+        return;
+      }
+
+      const correction = String(1 / scale);
+      if (appliedZoom === correction) return;
+
+      replaceViewport(VIEWPORT_OPEN);
+      void document.documentElement.offsetWidth;
+      replaceViewport(VIEWPORT_LOCKED);
+
+      const next = viewportScale();
+      if (next <= 1.02) {
+        appliedZoom = '';
+        document.documentElement.style.zoom = '';
+        return;
+      }
+
+      appliedZoom = String(1 / next);
+      document.documentElement.style.zoom = appliedZoom;
+    };
+
+    replaceViewport(VIEWPORT_LOCKED);
+    recoverIfZoomed();
 
     // --------------------------------------------------
     // 상태
@@ -64,54 +100,35 @@ export default function DisableZoom() {
     // --------------------------------------------------
     const onTouchStart = (event: TouchEvent) => {
       activeTouches = event.touches.length;
-    
-      // ⭐ 재생 버튼 등 허용된 터치는 가장 먼저 통과
-      if (isAllowedTap(event.target)) {
-        blockOneFingerZoom = false;
-    
-        const touch = event.touches[0];
-    
-        if (touch) {
-          lastTapAt = Date.now();
-          lastTapX = touch.clientX;
-          lastTapY = touch.clientY;
-        }
-    
-        return;
-      }
-    
-      // 두 손가락은 무조건 차단
+
       if (event.touches.length > 1) {
         event.preventDefault();
         blockOneFingerZoom = false;
         return;
       }
-    
+
       const touch = event.touches[0];
-    
       if (!touch) return;
-    
+
       const now = Date.now();
-      const timeSinceLastTap = now - lastTapAt;
-    
-      const distanceX = Math.abs(touch.clientX - lastTapX);
-      const distanceY = Math.abs(touch.clientY - lastTapY);
-    
-      if (
-        timeSinceLastTap > 0 &&
-        timeSinceLastTap < 320 &&
-        distanceX < 36 &&
-        distanceY < 36
-      ) {
-        event.preventDefault();
-        blockOneFingerZoom = true;
-      } else {
-        blockOneFingerZoom = false;
-      }
-    
+      const isDoubleTap =
+        now - lastTapAt > 0 &&
+        now - lastTapAt < 450 &&
+        Math.abs(touch.clientX - lastTapX) < 48 &&
+        Math.abs(touch.clientY - lastTapY) < 48;
+
       lastTapAt = now;
       lastTapX = touch.clientX;
       lastTapY = touch.clientY;
+
+      // 한 번 탭(재생 버튼 포함)은 통과하고, 연속 탭만 확대가 되지 않게 막는다.
+      if (!isDoubleTap || isAllowedTap(event.target)) {
+        blockOneFingerZoom = false;
+        return;
+      }
+
+      event.preventDefault();
+      blockOneFingerZoom = true;
     };
 
     // --------------------------------------------------
@@ -119,20 +136,8 @@ export default function DisableZoom() {
     // --------------------------------------------------
     const onTouchMove = (event: TouchEvent) => {
       activeTouches = event.touches.length;
-    
-      // ⭐ 재생 버튼 위에서는 터치 이벤트를 막지 않음
-      if (isAllowedTap(event.target)) {
-        return;
-      }
-    
-      // 두 손가락 확대 차단
-      if (event.touches.length > 1) {
-        event.preventDefault();
-        return;
-      }
-    
-      // 더블탭 확대 방지
-      if (blockOneFingerZoom) {
+
+      if (event.touches.length > 1 || blockOneFingerZoom) {
         event.preventDefault();
       }
     };
@@ -160,11 +165,7 @@ export default function DisableZoom() {
     // 더블클릭 확대 차단
     // --------------------------------------------------
     const onDoubleClick = (event: MouseEvent) => {
-      // 허용된 버튼은 정상적으로 클릭 가능
-      if (isAllowedTap(event.target)) {
-        return;
-      }
-
+      if (isAllowedTap(event.target)) return;
       event.preventDefault();
     };
 
@@ -212,18 +213,6 @@ export default function DisableZoom() {
       }
     };
 
-    // --------------------------------------------------
-    // 브라우저가 확대를 허용했는지 확인
-    // --------------------------------------------------
-    const recoverIfZoomed = () => {
-      if (isZoomed()) {
-        lockViewport();
-      }
-    };
-
-    // --------------------------------------------------
-    // visualViewport 크기 변화
-    // --------------------------------------------------
     const onViewportResize = () => {
       recoverIfZoomed();
     };
@@ -311,6 +300,11 @@ export default function DisableZoom() {
       onViewportResize,
     );
 
+    viewport?.addEventListener(
+      'scroll',
+      onViewportResize,
+    );
+
     window.addEventListener(
       'pageshow',
       recoverIfZoomed,
@@ -391,6 +385,11 @@ export default function DisableZoom() {
         onViewportResize,
       );
 
+      viewport?.removeEventListener(
+        'scroll',
+        onViewportResize,
+      );
+
       window.removeEventListener(
         'pageshow',
         recoverIfZoomed,
@@ -398,7 +397,8 @@ export default function DisableZoom() {
 
       window.clearInterval(timer);
 
-      lockViewport();
+      document.documentElement.style.zoom = '';
+      replaceViewport(VIEWPORT_LOCKED);
     };
   }, []);
 
