@@ -10,33 +10,21 @@
 
 @layer base {
   :root { color-scheme: light; }
- html {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-
-  /* 세로 스크롤만 허용 */
-  touch-action: pan-y;
-
-  
-}
+  html, body, body * {
+    /* 스크롤 제스처가 핀치 확대로 넘어가지 않게 세로 이동만 허용 */
+    touch-action: pan-y;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
 
 body {
   margin: 0;
   background: #ffffff;
   color: #111111;
   font-family: var(--font-myeongjo), 'AppleMyungjo', 'Batang', serif;
-
-  /* 세로 스크롤만 허용 */
-  touch-action: pan-y;
-
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
 }
-
-  /* manipulation은 핀치 확대를 허용한다. 사진·버튼 위에서도 세로 스크롤만 연다. */
-  img, video, button, a, input, textarea {
-    touch-action: pan-y;
-  }
   img, video {
     -webkit-user-drag: none;
     user-select: none;

@@ -5,10 +5,6 @@ import { useEffect } from 'react';
 const VIEWPORT_LOCKED =
   'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
 
-/** maximum-scale=1인 채로 이미 확대되면 iOS는 축소와 새로고침 복귀를 막는다. 잠깐 상한을 푼 뒤 다시 잠근다. */
-const VIEWPORT_OPEN =
-  'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover';
-
 function replaceViewport(content: string) {
   document.querySelectorAll('meta[name="viewport"]').forEach(node => node.remove());
   const meta = document.createElement('meta');
@@ -23,42 +19,23 @@ function viewportScale() {
 
 export default function DisableZoom() {
   useEffect(() => {
-    // --------------------------------------------------
-    // viewport 확대 잠금. 같은 문자열을 다시 넣으면 iOS가 무시하므로 노드를 교체한다.
-    // --------------------------------------------------
-    let appliedZoom = '';
+    // 스크롤 중(손가락이 화면에 있는 동안)에는 배율을 건드리지 않는다.
+    // 주소창이 줄며 visualViewport가 바뀔 때 확대로 오인하면 화면이 커진다.
+    let recovering = false;
 
     const recoverIfZoomed = () => {
-      const scale = viewportScale();
+      if (activeTouches > 0 || recovering) return;
+      if (viewportScale() <= 1.08) return;
 
-      if (scale <= 1.02) {
-        if (appliedZoom) {
-          appliedZoom = '';
-          document.documentElement.style.zoom = '';
-        }
-        return;
-      }
-
-      const correction = String(1 / scale);
-      if (appliedZoom === correction) return;
-
-      replaceViewport(VIEWPORT_OPEN);
-      void document.documentElement.offsetWidth;
+      recovering = true;
+      document.documentElement.style.zoom = '';
       replaceViewport(VIEWPORT_LOCKED);
-
-      const next = viewportScale();
-      if (next <= 1.02) {
-        appliedZoom = '';
-        document.documentElement.style.zoom = '';
-        return;
-      }
-
-      appliedZoom = String(1 / next);
-      document.documentElement.style.zoom = appliedZoom;
+      window.setTimeout(() => {
+        recovering = false;
+      }, 800);
     };
 
     replaceViewport(VIEWPORT_LOCKED);
-    recoverIfZoomed();
 
     // --------------------------------------------------
     // 상태
@@ -213,10 +190,6 @@ export default function DisableZoom() {
       }
     };
 
-    const onViewportResize = () => {
-      recoverIfZoomed();
-    };
-
     // --------------------------------------------------
     // 이벤트 옵션
     // --------------------------------------------------
@@ -293,18 +266,6 @@ export default function DisableZoom() {
       normalOptions,
     );
 
-    const viewport = window.visualViewport;
-
-    viewport?.addEventListener(
-      'resize',
-      onViewportResize,
-    );
-
-    viewport?.addEventListener(
-      'scroll',
-      onViewportResize,
-    );
-
     window.addEventListener(
       'pageshow',
       recoverIfZoomed,
@@ -378,16 +339,6 @@ export default function DisableZoom() {
       document.removeEventListener(
         'keydown',
         onKeyDown,
-      );
-
-      viewport?.removeEventListener(
-        'resize',
-        onViewportResize,
-      );
-
-      viewport?.removeEventListener(
-        'scroll',
-        onViewportResize,
       );
 
       window.removeEventListener(
