@@ -9,7 +9,7 @@ import ClosingVideo from './ClosingVideo';
 export default function Closing() {
   return (
     <Section className="px-0 justify-start">
-      <Reveal><p className="text-gray-400"><span>*</span> THANK YOU <span>*</span></p></Reveal>
+      <Reveal><p className="text-gray-400 text-[18px]"><span>*</span> THANK YOU <span>*</span></p></Reveal>
       <Reveal delay={120} className="relative aspect-[6/3] w-full overflow-hidden mt-16">
         <ClosingVideo
           className="absolute inset-0 h-full w-full object-cover"

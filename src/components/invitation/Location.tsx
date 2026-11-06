@@ -11,14 +11,14 @@ export default function Location() {
   return (
     <Section aria-label="예식장 오시는 길" className="gap-9 text-center min-h-[70svh]">
       <Reveal>
-        <p className="text-gray-400"><span>*</span> LOCATION <span>*</span></p>
+        <p className="text-gray-400 text-[18px]"><span>*</span> LOCATION <span>*</span></p>
       </Reveal>
 
       <Reveal delay={120} className="w-full py-4">
         <div className="mx-auto w-full max-w-[320px] text-center">
           <p className="text-[20px] tracking-wide text-neutral-800">{WEDDING.venue}</p>
-          <p className="mt-4 text-[13px] leading-[1.9] text-neutral-600">{WEDDING.address}</p>
-          <p className="mt-5 text-[12px] tracking-wide text-neutral-500">{WEDDING.directions}</p>
+          <p className="mt-4 text-[15px] leading-[1.9] text-neutral-600">{WEDDING.address}</p>
+          <p className="mt-5 text-[14px] tracking-wide text-neutral-500">{WEDDING.directions}</p>
         </div>
       </Reveal>
 

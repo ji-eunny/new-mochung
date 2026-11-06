@@ -1,24 +1,66 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { assetPath } from '@/lib/asset';
 
-/** 배경음악 토글. 우상단 스피커로 public m4a를 재생/일시정지. */
+/** 배경음악 토글. 입장 시 바로 재생하고, 우상단 스피커로 끄고 켤 수 있다. */
 const BGM_SRC = assetPath('/our-story-begins.m4a');
 
 export default function BgmToggle() {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const pausedByUser = useRef(false);
   const [playing, setPlaying] = useState(false);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.loop = true;
+
+    const unlockEvents = ['pointerdown', 'touchstart', 'click', 'keydown'] as const;
+
+    const start = () => {
+      if (pausedByUser.current || !audio.paused) return;
+
+      const promise = audio.play();
+      if (!promise) return;
+
+      promise
+        .then(() => {
+          for (const eventName of unlockEvents) {
+            window.removeEventListener(eventName, start);
+          }
+        })
+        .catch(() => {
+          /* 자동재생이 막히면 첫 터치에서 다시 시도한다. */
+        });
+    };
+
+    start();
+
+    for (const eventName of unlockEvents) {
+      window.addEventListener(eventName, start, { passive: true });
+    }
+
+    return () => {
+      for (const eventName of unlockEvents) {
+        window.removeEventListener(eventName, start);
+      }
+    };
+  }, []);
 
   const toggle = async () => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    if (playing) {
+    if (!audio.paused) {
+      pausedByUser.current = true;
       audio.pause();
       setPlaying(false);
       return;
     }
+
+    pausedByUser.current = false;
 
     try {
       audio.loop = true;
@@ -56,7 +98,7 @@ export default function BgmToggle() {
       <audio
         ref={audioRef}
         src={BGM_SRC}
-        preload="metadata"
+        preload="auto"
         playsInline
         loop
         aria-hidden="true"

@@ -18,7 +18,7 @@ export default function Notice() {
   return (
     <Section aria-label="예식 안내" className="gap-10 text-center min-h-[70svh]">
       <Reveal>
-        <p className="text-gray-400"><span>*</span> NOTICE <span>*</span></p>
+        <p className="text-gray-400 text-[18px]"><span>*</span> NOTICE <span>*</span></p>
       </Reveal>
 
       <Reveal delay={120} className="w-full">
@@ -49,8 +49,8 @@ export default function Notice() {
                   className="w-full shrink-0 px-2 py-10"
                   aria-hidden={notice.title !== NOTICES[index].title}
                 >
-                  <p className="text-[16px] tracking-wide text-neutral-800">{notice.title}</p>
-                  <div className="mt-4 space-y-1 text-[13px] leading-[1.9] text-neutral-600">
+                  <p className="text-[18px] tracking-wide text-neutral-800">{notice.title}</p>
+                  <div className="mt-4 space-y-1 text-[15px] leading-[1.9] text-neutral-600">
                     {notice.lines.map((line, lineIndex) =>
                       line === '' ? (
                         <div key={`spacer-${lineIndex}`} className="h-3" aria-hidden="true" />

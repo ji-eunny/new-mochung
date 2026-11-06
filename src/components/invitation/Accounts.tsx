@@ -31,7 +31,7 @@ export default function Accounts() {
 
   return (
     <Section aria-labelledby="accounts-heading" className="gap-7">
-      <Reveal><p className="text-gray-400"><span>*</span> ACCOUNT <span>*</span></p></Reveal>
+      <Reveal><p className="text-gray-400 text-[18px]"><span>*</span> ACCOUNT <span>*</span></p></Reveal>
       <Reveal delay={120} className="mt-4 w-[70%] max-w-[300px]">
         <Photo photo={PHOTOS.accounts} sizes="70vw" className="aspect-[6/4] w-full [-webkit-mask-image:linear-gradient(to_right,transparent_0%,#000_28%,#000_72%,transparent_100%)] [mask-image:linear-gradient(to_right,transparent_0%,#000_28%,#000_72%,transparent_100%)]" />
       </Reveal>

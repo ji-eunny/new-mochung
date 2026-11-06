@@ -23,7 +23,7 @@ export default function WeddingDay() {
   return (
     <Section aria-label="예식일 달력" className="gap-9 min-h-[100svh]">
       <Reveal>
-        <p className="text-gray-400"><span>*</span> WEDDING DAY <span>*</span></p>
+        <p className="text-gray-400 text-[18px]"><span>*</span> WEDDING DAY <span>*</span></p>
       </Reveal>
 
       <Reveal delay={120} className="text-center">
@@ -32,7 +32,7 @@ export default function WeddingDay() {
           <span className="mx-1 align-middle text-[24px] text-neutral-400">.</span>
           {String(day).padStart(2, '0')}
         </p>
-        <p className="mt-4 text-[14px] tracking-wide text-neutral-500">{WEDDING.dateLabel}</p>
+        <p className="mt-4 text-[16px] tracking-wide text-neutral-500">{WEDDING.dateLabel}</p>
       </Reveal>
 
       <Reveal delay={200} className="w-full max-w-[320px]">

@@ -7,7 +7,7 @@ import Reveal from './Reveal';
 export default function Greeting() {
   return (
     <Section aria-label="초대의 글" className="gap-12 min-h-[70svh]">
-      <Reveal><p className="text-gray-400"><span>*</span> INVITATION <span>*</span></p></Reveal>
+      <Reveal><p className="text-gray-400 text-[18px]"><span>*</span> INVITATION <span>*</span></p></Reveal>
       <div className="grid w-full grid-cols-2 gap-1 mt-2">
         <Reveal className="aspect-[4/3] w-full"><Photo photo={PHOTOS.selfie} sizes="45vw" className="h-full w-full" /></Reveal>
         <Reveal delay={140} className="aspect-[4/3] w-full"><Photo photo={PHOTOS.camera} sizes="45vw" className="h-full w-full" /></Reveal>

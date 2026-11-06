@@ -15,7 +15,7 @@ export default function Portraits() {
 
   return (
     <Section aria-label="우리의 웨딩 사진" className="px-5">
-      <Reveal><p className="text-gray-400 mt-[-16px]"><span>*</span> PHOTOS <span>*</span></p></Reveal>
+      <Reveal><p className="text-gray-400 text-[18px] mt-[-16px]"><span>*</span> PHOTOS <span>*</span></p></Reveal>
       <div className="relative mx-auto mt-12 aspect-[2/3] w-full max-w-[420px]">
         <Reveal className="absolute left-[7%] top-[3%] aspect-[2/3] w-[40%]">
           <button
