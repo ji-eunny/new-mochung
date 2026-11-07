@@ -20,7 +20,7 @@ export default function Gallery() {
         <Reveal className="w-full max-w-[320px] px-5">
           <button
             type="button"
-            className="mt-12 block w-full touch-manipulation"
+            className="mt-12 block w-full touch-pan-y"
             onClick={() => setPopupPhoto(PHOTOS.veil)}
             aria-haspopup="dialog"
             aria-label={`${PHOTOS.veil.alt} 크게 보기`}
@@ -38,7 +38,7 @@ export default function Gallery() {
                   {isMore ? (
                     <button
                       type="button"
-                      className="relative block h-full w-full touch-manipulation"
+                      className="relative block h-full w-full touch-pan-y"
                       onClick={() => setAlbumOpen(true)}
                       aria-haspopup="dialog"
                       aria-label="사진 더보기, 슬라이드로 크게 보기"
@@ -51,7 +51,7 @@ export default function Gallery() {
                   ) : (
                     <button
                       type="button"
-                      className="relative block h-full w-full touch-manipulation"
+                      className="relative block h-full w-full touch-pan-y"
                       onClick={() => setPopupPhoto(photo)}
                       aria-haspopup="dialog"
                       aria-label={`${photo.alt} 크게 보기`}

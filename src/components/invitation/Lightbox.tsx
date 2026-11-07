@@ -98,12 +98,40 @@ export default function Lightbox({ photos, initialIndex, onClose }: LightboxProp
     return () => { element?.close(); document.body.style.overflow = overflow; focused?.focus({ preventScroll: true }); };
   }, []);
 
+  // Gallery 팝업에서는 핀치·제스처 확대를 막는다. 좌우 드래그(한 손가락)만 허용.
+  useEffect(() => {
+    const element = dialog.current;
+    if (!element) return;
+
+    const blockZoom = (event: TouchEvent) => {
+      if (event.touches.length > 1) event.preventDefault();
+    };
+    const blockGesture = (event: Event) => {
+      event.preventDefault();
+    };
+
+    const options: AddEventListenerOptions = { passive: false, capture: true };
+    element.addEventListener('touchstart', blockZoom, options);
+    element.addEventListener('touchmove', blockZoom, options);
+    element.addEventListener('gesturestart', blockGesture, options);
+    element.addEventListener('gesturechange', blockGesture, options);
+    element.addEventListener('gestureend', blockGesture, options);
+
+    return () => {
+      element.removeEventListener('touchstart', blockZoom, true);
+      element.removeEventListener('touchmove', blockZoom, true);
+      element.removeEventListener('gesturestart', blockGesture, true);
+      element.removeEventListener('gesturechange', blockGesture, true);
+      element.removeEventListener('gestureend', blockGesture, true);
+    };
+  }, []);
+
   return (
     <dialog
       ref={dialog}
       tabIndex={-1}
       aria-label="사진 크게 보기"
-      className="fixed inset-0 m-0 h-[100dvh] max-h-none w-full max-w-none border-0 bg-white p-0 text-neutral-900 outline-none focus:outline-none focus-visible:outline-none [&::backdrop]:bg-white"
+      className="fixed inset-0 m-0 h-[100dvh] max-h-none w-full max-w-none touch-none border-0 bg-white p-0 text-neutral-900 outline-none focus:outline-none focus-visible:outline-none [&::backdrop]:bg-white"
       onCancel={onClose}
       onClick={event => { if (event.target === event.currentTarget) onClose(); }}
       onKeyDown={event => {
@@ -125,7 +153,7 @@ export default function Lightbox({ photos, initialIndex, onClose }: LightboxProp
         className={
           canNavigate
             ? `absolute inset-x-0 top-[max(56px,env(safe-area-inset-top))] bottom-[max(84px,env(safe-area-inset-bottom))] overflow-hidden touch-none select-none ${dragging ? 'cursor-grabbing' : 'cursor-grab'}`
-            : 'absolute inset-x-0 top-[max(56px,env(safe-area-inset-top))] bottom-[max(24px,env(safe-area-inset-bottom))] overflow-hidden'
+            : 'absolute inset-x-0 top-[max(56px,env(safe-area-inset-top))] bottom-[max(24px,env(safe-area-inset-bottom))] overflow-hidden touch-none'
         }
         onPointerDown={event => {
           if (!canNavigate || shiftRef.current !== 0 || event.button !== 0) return;

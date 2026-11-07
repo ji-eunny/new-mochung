@@ -16,19 +16,12 @@ export default function ScrollToTop() {
     };
 
     toTop();
-    requestAnimationFrame(toTop);
-    const timers = [0, 50, 150, 400].map(delay => window.setTimeout(toTop, delay));
 
-    const onPageShow = () => {
-      toTop();
-      requestAnimationFrame(toTop);
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) toTop();
     };
-
     window.addEventListener('pageshow', onPageShow);
-    return () => {
-      window.removeEventListener('pageshow', onPageShow);
-      for (const timer of timers) window.clearTimeout(timer);
-    };
+    return () => window.removeEventListener('pageshow', onPageShow);
   }, []);
 
   return null;
