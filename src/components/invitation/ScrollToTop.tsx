@@ -16,13 +16,19 @@ export default function ScrollToTop() {
     };
 
     toTop();
+    requestAnimationFrame(toTop);
+    const timers = [0, 50, 150, 400].map(delay => window.setTimeout(toTop, delay));
 
-    // bfcache(뒤로가기 등)로 돌아올 때도 맨 위
-    const onPageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) toTop();
+    const onPageShow = () => {
+      toTop();
+      requestAnimationFrame(toTop);
     };
+
     window.addEventListener('pageshow', onPageShow);
-    return () => window.removeEventListener('pageshow', onPageShow);
+    return () => {
+      window.removeEventListener('pageshow', onPageShow);
+      for (const timer of timers) window.clearTimeout(timer);
+    };
   }, []);
 
   return null;
