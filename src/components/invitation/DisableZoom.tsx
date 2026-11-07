@@ -27,7 +27,7 @@ function scrollToTop() {
   document.body.scrollTop = 0;
 }
 
-/** 새로고침·재진입 시에만 배율을 강제로 1로 되돌린다. 스크롤 중에는 호출하지 않는다. */
+/** 새로고침·재진입 시에만 배율을 강제로 1로 되돌린다. */
 function resetViewportHard() {
   document.documentElement.style.zoom = '';
   replaceViewport(VIEWPORT_OPEN);
@@ -51,20 +51,51 @@ export default function DisableZoom() {
     let isScrolling = false;
     let scrollIdleTimer = 0;
     let touchOrigin: { x: number; y: number } | null = null;
-    /** 손가락으로 세로 스크롤 중이면 true. 손을 떼도 관성 구간은 isScrolling으로 이어진다. */
+    /** 손가락으로 세로 스크롤을 끄는 중 */
     let scrollGesture = false;
-    /** 스크롤·관성 중 들어온 탭은 클릭으로 이어지지 않게 한다. */
     let suppressClick = false;
 
-    const markScrolling = () => {
+    // 관성 스크롤 동안 새 터치(핀치 포함)를 가로채는 투명 막
+    const blocker = document.createElement('div');
+    blocker.setAttribute('aria-hidden', 'true');
+    blocker.setAttribute('data-scroll-blocker', 'true');
+    blocker.style.cssText =
+      'position:fixed;inset:0;z-index:2147483646;touch-action:none;background:transparent;display:none;';
+
+    const blockTouch = (event: Event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    blocker.addEventListener('touchstart', blockTouch, { passive: false, capture: true });
+    blocker.addEventListener('touchmove', blockTouch, { passive: false, capture: true });
+    blocker.addEventListener('touchend', blockTouch, { passive: false, capture: true });
+    blocker.addEventListener('gesturestart', blockTouch, { passive: false, capture: true });
+    blocker.addEventListener('gesturechange', blockTouch, { passive: false, capture: true });
+    blocker.addEventListener('gestureend', blockTouch, { passive: false, capture: true });
+    document.body.appendChild(blocker);
+
+    const showBlocker = () => {
+      blocker.style.display = 'block';
+    };
+
+    const hideBlocker = () => {
+      blocker.style.display = 'none';
+    };
+
+    const markScrolling = (withBlocker = false) => {
       isScrolling = true;
       suppressClick = true;
+      if (withBlocker || activeTouches === 0) showBlocker();
+
       window.clearTimeout(scrollIdleTimer);
+      // iOS 관성 스크롤은 1초 넘게 이어질 수 있다.
       scrollIdleTimer = window.setTimeout(() => {
         isScrolling = false;
         scrollGesture = false;
         suppressClick = false;
-      }, 280);
+        hideBlocker();
+      }, 900);
     };
 
     const isAllowedTap = (target: EventTarget | null) => {
@@ -77,16 +108,25 @@ export default function DisableZoom() {
     };
 
     const onScroll = () => {
-      markScrolling();
+      // 손을 떼고 화면이 미끄러지는 동안에도 계속 잠근다.
+      markScrolling(true);
     };
 
     const onTouchStart = (event: TouchEvent) => {
       activeTouches = event.touches.length;
 
-      // 두 손가락 이상은 항상 차단(스크롤 중 핀치 확대 포함)
+      // 두 손가락 이상은 항상 차단
       if (event.touches.length > 1) {
         event.preventDefault();
         blockOneFingerZoom = false;
+        return;
+      }
+
+      // 관성 스크롤 중에는 새 터치를 전부 막아 핀치가 시작되지 않게 한다.
+      if (isScrolling && !scrollGesture) {
+        event.preventDefault();
+        suppressClick = true;
+        showBlocker();
         return;
       }
 
@@ -95,8 +135,7 @@ export default function DisableZoom() {
 
       touchOrigin = { x: touch.clientX, y: touch.clientY };
 
-      // 스크롤·관성 중에는 새 터치를 스크롤 이어가기로만 허용하고, 탭/확대는 막는다.
-      if (isScrolling || scrollGesture) {
+      if (scrollGesture) {
         suppressClick = true;
         blockOneFingerZoom = false;
         return;
@@ -130,13 +169,19 @@ export default function DisableZoom() {
         return;
       }
 
+      // 스크롤 중 두 번째 손가락이 들어오면 막는다.
+      if ((isScrolling || scrollGesture) && event.touches.length > 1) {
+        event.preventDefault();
+        return;
+      }
+
       const touch = event.touches[0];
       if (touch && touchOrigin) {
         const dx = Math.abs(touch.clientX - touchOrigin.x);
         const dy = Math.abs(touch.clientY - touchOrigin.y);
         if (dy > 8 && dy > dx) {
           scrollGesture = true;
-          markScrolling();
+          markScrolling(false);
         }
       }
     };
@@ -146,7 +191,10 @@ export default function DisableZoom() {
       if (event.touches.length === 0) {
         blockOneFingerZoom = false;
         touchOrigin = null;
-        if (scrollGesture || isScrolling) markScrolling();
+        // 손을 떼는 순간부터 관성 스크롤용 막 표시
+        if (scrollGesture || isScrolling) {
+          markScrolling(true);
+        }
       }
     };
 
@@ -154,22 +202,20 @@ export default function DisableZoom() {
       activeTouches = 0;
       blockOneFingerZoom = false;
       touchOrigin = null;
-      if (scrollGesture || isScrolling) markScrolling();
+      if (scrollGesture || isScrolling) markScrolling(true);
     };
 
     const onPointerDown = (event: PointerEvent) => {
-      if (!suppressClick && !isScrolling && !scrollGesture) return;
-      if (event.pointerType === 'touch' && !isAllowedTap(event.target)) {
-        // 스크롤 중 버튼·링크 터치만 막고, 세로 스크롤 자체는 유지
-        const target = event.target;
-        if (target instanceof HTMLElement && target.closest('button, a, [role="button"]')) {
-          event.preventDefault();
-        }
+      if (!suppressClick && !isScrolling) return;
+      if (event.pointerType !== 'touch' || isAllowedTap(event.target)) return;
+      const target = event.target;
+      if (target instanceof HTMLElement && target.closest('button, a, [role="button"]')) {
+        event.preventDefault();
       }
     };
 
     const onClickCapture = (event: MouseEvent) => {
-      if (!suppressClick && !isScrolling && !scrollGesture) return;
+      if (!suppressClick && !isScrolling) return;
       if (isAllowedTap(event.target)) return;
       event.preventDefault();
       event.stopPropagation();
@@ -181,7 +227,7 @@ export default function DisableZoom() {
     };
 
     const onWheel = (event: WheelEvent) => {
-      markScrolling();
+      markScrolling(true);
       if (event.ctrlKey || event.metaKey) event.preventDefault();
     };
 
@@ -243,6 +289,7 @@ export default function DisableZoom() {
       window.removeEventListener('pageshow', onPageShow);
       window.clearInterval(timer);
       window.clearTimeout(scrollIdleTimer);
+      blocker.remove();
       document.documentElement.style.zoom = '';
       replaceViewport(VIEWPORT_LOCKED);
     };
