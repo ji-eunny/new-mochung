@@ -3,13 +3,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { assetPath } from '@/lib/asset';
 
-/** 배경음악 토글. 입장 시 바로 재생하고, 우상단 스피커로 끄고 켤 수 있다. */
+/** 배경음악 토글. 기본은 재생. 스크롤·화면 터치로 켜지 않고, 버튼으로만 끄고 켠다. */
 const BGM_SRC = assetPath('/our-story-begins.m4a');
 
 export default function BgmToggle() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const pausedByUser = useRef(false);
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(true);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -17,36 +17,17 @@ export default function BgmToggle() {
 
     audio.loop = true;
 
-    const unlockEvents = ['pointerdown', 'touchstart', 'click', 'keydown'] as const;
-
-    const start = () => {
-      if (pausedByUser.current || !audio.paused) return;
-
+    const tryPlay = () => {
+      if (pausedByUser.current) return;
       const promise = audio.play();
       if (!promise) return;
-
-      promise
-        .then(() => {
-          for (const eventName of unlockEvents) {
-            window.removeEventListener(eventName, start);
-          }
-        })
-        .catch(() => {
-          /* 자동재생이 막히면 첫 터치에서 다시 시도한다. */
-        });
+      promise.catch(() => {
+        // 브라우저가 소리 자동재생을 막으면 스피커 버튼으로만 켠다.
+        setPlaying(false);
+      });
     };
 
-    start();
-
-    for (const eventName of unlockEvents) {
-      window.addEventListener(eventName, start, { passive: true });
-    }
-
-    return () => {
-      for (const eventName of unlockEvents) {
-        window.removeEventListener(eventName, start);
-      }
-    };
+    tryPlay();
   }, []);
 
   const toggle = async () => {
@@ -99,11 +80,14 @@ export default function BgmToggle() {
         ref={audioRef}
         src={BGM_SRC}
         preload="auto"
+        autoPlay
         playsInline
         loop
         aria-hidden="true"
         onEnded={() => setPlaying(false)}
-        onPause={() => setPlaying(false)}
+        onPause={() => {
+          if (pausedByUser.current || audioRef.current?.paused) setPlaying(false);
+        }}
         onPlay={() => setPlaying(true)}
       />
     </>
