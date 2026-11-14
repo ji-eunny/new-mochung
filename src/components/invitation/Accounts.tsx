@@ -32,7 +32,7 @@ export default function Accounts() {
   return (
     <Section aria-labelledby="accounts-heading" className="gap-7">
       <Reveal><p className="text-gray-400"><span>*</span> ACCOUNT <span>*</span></p></Reveal>
-      <Reveal className="mt-2 text-center text-[16px] leading-[2] text-neutral-600">
+      <Reveal className="mt-2 text-center text-[15px] leading-[2] text-neutral-600">
         <p>참석이 어려우신 분들을 위해</p>
         <p>계좌번호를 기재하였습니다.</p>
         <p>너그러운 마음으로 양해 부탁드립니다.</p>
